@@ -1,0 +1,31 @@
+#
+# $Id: harbour_mvc_sample.hbp
+#
+# How to compile:
+# hbmk2 harbour_mvc_sample.hbp
+#
+
+-w2
+-gc3
+-oharbour_mvc_sample
+{linux}-ldl
+-lpthread
+
+harbour_mvc_sample.prg
+
+app/application.prg
+
+app/controllers/controller.prg
+app/controllers/application_controller.prg
+
+app/models/model.prg
+app/models/application_model.prg
+
+app/views/view.prg
+app/views/application_view.prg
+
+# Special parameters for LINUX/GTK
+{linux}-lm
+{linux}-static
+{linux}-d__LINUX__
+{linux}-d__GTK__
