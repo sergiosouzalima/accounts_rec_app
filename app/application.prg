@@ -35,7 +35,7 @@ METHOD Run() CLASS Application
 
     ::Controller:View:showMainWindow( ::Controller:Model )
     //::Controller:View:showMainMenu()
-    ::Controller:getDispatchActions()
+    ::Controller:getDispatchActions( ::Controller:Model )
     //::Controller:View:showMenu( ::Controller:Model )
     ::Controller:View:showEnd()
     //::Controller:dispatchActions()

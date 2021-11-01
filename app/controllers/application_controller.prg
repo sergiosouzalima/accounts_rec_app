@@ -17,18 +17,18 @@ CLASS ApplicationController FROM Controller
 
 END CLASS
 
-METHOD getDispatchActions() CLASS ApplicationController
+METHOD getDispatchActions( oModel ) CLASS ApplicationController
     LOCAL nChosenItem := 0
 
     Repeat
-        ::View:showMainMenu( ::Model:aMenuItems, ::Model:hMenuScreenPos, ::Model:nMaxRow, ::Model:nMaxCol )
+        ::View:showMainMenu( oModel:hMainMenuBox, oModel:aMainMenuItems )
         nChosenItem := ::View:getOption()
 
         // switch....
         switch nChosenItem
 
             case 4
-                ::View:showAbout( ::Model:hMainBoxPos, ::Model:cAppVersion )
+                ::View:showAbout( oModel:hAboutBox, oModel:cAppVersion )
                 exit
             /*case '2'
                 ::vista:setTipoConversion( cTipo )

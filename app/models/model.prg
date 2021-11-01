@@ -23,11 +23,6 @@ CLASS Model
     DATA cAppName       AS  STRING  INIT    APP_NAME
     DATA nMaxCol        AS  INTEGER INIT    MAX_COL
     DATA nMaxRow        AS  INTEGER INIT    MAX_ROW
-    DATA hMainBoxPos    AS  HASH    INIT {;
-        "nRow1" => 08, "nCol1" => 03        ,   ;
-        "nRow2" => 27 ,"nCol2" => MAX_COL   ,   ;
-        "cChars" => "┌─┐│┘─└│ "                 ;
-        }
 
     EXPORTED:
         METHOD New() CONSTRUCTOR

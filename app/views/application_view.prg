@@ -13,37 +13,24 @@
 CLASS ApplicationView FROM View
 
     EXPORTED:
-        METHOD showMainMenu( aMenuItems, hMenuScreenPos )
+        METHOD showMainMenu( hMainMenuBox, aMenuItems )
         METHOD getOption()
-        METHOD showAbout( hMainBoxPos )
-
-    HIDDEN:
-        METHOD showMainMenuBox(aMenu, nInitialRow, nInitialCol)
+        METHOD showAbout( hAboutBox, cAppName )
 
 END CLASS
 
-METHOD showMainMenu( aMenuItems, hMenuScreenPos, nMaxRow, nMaxCol ) CLASS ApplicationView
-    LOCAL i, aMenu := aMenuItems
-    LOCAL nInitialRow := hMenuScreenPos["nRow"], nInitialCol := hMenuScreenPos["nCol"]
+METHOD showMainMenu( hMainMenuBox, aMenuItems ) CLASS ApplicationView
+    LOCAL i := 0
 
-    @nInitialRow - 02, nInitialCol - 04 clear to nMaxRow, nMaxCol - 03
+    ::showBox( ;
+        hMainMenuBox["nRow1"], hMainMenuBox["nCol1"], ;
+        hMainMenuBox["nRow2"], hMainMenuBox["nCol2"], ;
+        hMainMenuBox["cTitle"]  ;
+    )
 
-    ::showMainMenuBox(aMenu, nInitialRow, nInitialCol)
-
-    FOR i := 1 TO LEN(aMenu)
-        @ nInitialRow + i, nInitialCol PROMPT aMenu[i,01] message aMenu[i,02]
+    FOR i := 1 TO LEN(aMenuItems)
+        @ hMainMenuBox["nRow1"] + i, hMainMenuBox["nCol1"] + 2 PROMPT aMenuItems[i,01] message aMenuItems[i,02]
     NEXT
-RETURN NIL
-
-METHOD showMainMenuBox(aMenu, nInitialRow, nInitialCol) CLASS ApplicationView
-    LOCAL nTamMenu := LEN(aMenu)
-    LOCAL nFinalRow := nInitialRow + nTamMenu + 2
-    LOCAL nFinalCol := 04 + LEN(aMenu[01,01]) + 04
-
-    ::showBox(nInitialRow - 01, nInitialCol - 03, nFinalRow, nFinalCol, "Main")
-
-    //@nInitialRow - 01, nInitialCol - 03 TO nFinalRow, nFinalCol DOUBLE
-    //@nInitialRow - 01, nInitialCol SAY "[ Main ]"
 RETURN NIL
 
 METHOD getOption() CLASS ApplicationView
@@ -51,16 +38,10 @@ METHOD getOption() CLASS ApplicationView
     MENU TO nChoseItem
 RETURN nChoseItem
 
-METHOD showAbout( hMainBoxPos, cAppName ) CLASS ApplicationView
+METHOD showAbout( hAboutBox, cAppName ) CLASS ApplicationView
     LOCAL nOpc := 0
 
-    /*hb_DispBox( ;
-        hMainBoxPos["nRow1"], hMainBoxPos["nCol1"],   ;
-        hMainBoxPos["nRow2"], hMainBoxPos["nCol2"] - 03,   ;
-        hb_UTF8ToStrBox( hMainBoxPos["cChars"] )         ;
-    )*/
-    ::showBox(hMainBoxPos["nRow1"], hMainBoxPos["nCol1"], hMainBoxPos["nRow2"], hMainBoxPos["nCol2"] - 03, "Sobre")
-
+    ::showBox(hAboutBox["nRow1"], hAboutBox["nCol1"], hAboutBox["nRow2"], hAboutBox["nCol2"], "Sobre")
 
     @10,06 SAY  "------ BANCO DE DADOS ------"
     @12,06 SAY  "NOME DO BANCO DE DADOS......: " //+ BD_CONTAS_RECEBER
@@ -79,4 +60,6 @@ METHOD showAbout( hMainBoxPos, cAppName ) CLASS ApplicationView
     @27,06 ;
     PROMPT  "  Tecle <ENTER> para voltar "
     MENU TO nOpc
+
+    ::clearBox(hAboutBox["nRow1"], hAboutBox["nCol1"], hAboutBox["nRow2"], hAboutBox["nCol2"])
 RETURN NIL

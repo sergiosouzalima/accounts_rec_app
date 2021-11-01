@@ -8,6 +8,7 @@
 
 #include "hbclass.ch"
 #include "../assets/custom_commands_v1.0.0.ch"
+#include "box.ch"
 
 //------------------------------------------------------------------
 CLASS View
@@ -17,6 +18,7 @@ CLASS View
         METHOD  showEnd()
         METHOD  showMainMenu() VIRTUAL
         METHOD  showBox(nInitialRow, nInitialCol, nFinalRow, nFinalCol)
+        METHOD  clearBox(nInitialRow, nInitialCol, nFinalRow, nFinalCol)
 
 END CLASS
 
@@ -35,8 +37,13 @@ METHOD showMainWindow( oModel ) CLASS View
 RETURN NIL
 
 METHOD showBox(nInitialRow, nInitialCol, nFinalRow, nFinalCol, cTitle) CLASS View
-    @nInitialRow - 01, nInitialCol - 03 TO nFinalRow, nFinalCol DOUBLE
-    @nInitialRow - 01, nInitialCol SAY "[ " + cTitle + " ]"
+    @ nInitialRow, nInitialCol, nFinalRow, nFinalCol BOX B_DOUBLE_SINGLE + SPACE(1)
+    @ nInitialRow - 01, nInitialCol CLEAR TO nInitialRow - 01, nFinalCol
+    @ nInitialRow - 01, nInitialCol SAY "[ " + cTitle + " ]"
+RETURN NIL
+
+METHOD clearBox(nInitialRow, nInitialCol, nFinalRow, nFinalCol) CLASS View
+    @ nInitialRow - 01, nInitialCol CLEAR TO nFinalRow, nFinalCol
 RETURN NIL
 
 //------------------------------------------------------------------
