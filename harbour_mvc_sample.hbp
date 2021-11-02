@@ -24,6 +24,8 @@ app/models/application_model.prg
 app/views/view.prg
 app/views/application_view.prg
 
+lib/browse_data.prg
+
 # Special parameters for LINUX/GTK
 {linux}-lm
 {linux}-static

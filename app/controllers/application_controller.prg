@@ -13,9 +13,21 @@
 CLASS ApplicationController FROM Controller
 
     EXPORTED:
-        METHOD getDispatchActions()
+        METHOD  getDispatchActions(oModel)
+
+    HIDDEN:
+        METHOD  runCustomer()
 
 END CLASS
+
+METHOD runCustomer() CLASS ApplicationController
+    //LOCAL oView := CustomerView():New()
+    //LOCAL oModel := CustomerModel():New()
+    //LOCAL oController := CustomerController():New( oView, oModel )
+
+    //oController::Run()
+    BrowseData():New():Run()
+RETURN NIL
 
 METHOD getDispatchActions( oModel ) CLASS ApplicationController
     LOCAL nChosenItem := 0
@@ -26,16 +38,14 @@ METHOD getDispatchActions( oModel ) CLASS ApplicationController
 
         // switch....
         switch nChosenItem
-
             case 4
                 ::View:showAbout( oModel:hAboutBox, oModel:cAppVersion )
                 exit
-            /*case '2'
-                ::vista:setTipoConversion( cTipo )
-                ::gestionDeTipoConversion()
+            case 2
+                ::runCustomer()
                 exit
 
-            case '3'
+           /* case '3'
                 ::vista:acercaDe()
                 exit
 
@@ -43,6 +53,4 @@ METHOD getDispatchActions( oModel ) CLASS ApplicationController
                 ::vista:operacionIncorrecta()*/
         end switch
     Until nChosenItem == 5
-
-
 RETURN NIL
