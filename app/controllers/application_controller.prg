@@ -7,7 +7,7 @@
 */
 
 #include "hbclass.ch"
-#include "../assets/custom_commands_v1.0.0.ch"
+#include "../../lib/custom_commands_v1.0.0.ch"
 
 //------------------------------------------------------------------
 CLASS ApplicationController FROM Controller
@@ -17,39 +17,38 @@ CLASS ApplicationController FROM Controller
 
     HIDDEN:
         METHOD  runCustomer()
+        METHOD  runAbout()
 
 END CLASS
 
-METHOD runCustomer() CLASS ApplicationController
-    //LOCAL oView := CustomerView():New()
-    //LOCAL oModel := CustomerModel():New()
-    //LOCAL oController := CustomerController():New( oView, oModel )
+METHOD runAbout() CLASS ApplicationController
+    LOCAL oModel := AboutModel():New()
+    LOCAL oView := AboutView():New()
+    oView:Run(oModel)
+RETURN NIL
 
-    //oController::Run()
-    BrowseData():New():Run()
+METHOD runCustomer() CLASS ApplicationController
+    LOCAL oBrowseData := BrowseData():New()
+    oBrowseData:Run()
+    oBrowseData := oBrowseData:Destroy()
 RETURN NIL
 
 METHOD getDispatchActions( oModel ) CLASS ApplicationController
     LOCAL nChosenItem := 0
 
     Repeat
-        ::View:showMainMenu( oModel:hMainMenuBox, oModel:aMainMenuItems )
-        nChosenItem := ::View:getOption()
+        ::getView:showMainMenu( oModel:hMainMenuBox, oModel:aMainMenuItems )
+        nChosenItem := ::getView:getOption()
 
         // switch....
         switch nChosenItem
             case 4
-                ::View:showAbout( oModel:hAboutBox, oModel:cAppVersion )
+                ::runAbout()
                 exit
             case 2
                 ::runCustomer()
                 exit
-
-           /* case '3'
-                ::vista:acercaDe()
-                exit
-
-            otherwise
+            /*otherwise
                 ::vista:operacionIncorrecta()*/
         end switch
     Until nChosenItem == 5

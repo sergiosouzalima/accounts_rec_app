@@ -7,7 +7,7 @@
 */
 
 #include "hbclass.ch"
-#include "assets/custom_commands_v1.0.0.ch"
+#include "../lib/custom_commands_v1.0.0.ch"
 
 //------------------------------------------------------------------
 // Main Class
@@ -16,7 +16,6 @@ CLASS Application
 
     METHOD New() CONSTRUCTOR
     METHOD Run()
-
 END CLASS
 
 //------------------------------------------------------------------
@@ -26,18 +25,13 @@ METHOD New() CLASS Application
     LOCAL oModel := ApplicationModel():New()
 
     ::Controller := ApplicationController():New( oView, oModel )
-
 RETURN Self
 
 //------------------------------------------------------------------
 // Starting point
 METHOD Run() CLASS Application
 
-    ::Controller:View:showMainWindow( ::Controller:Model )
-    //::Controller:View:showMainMenu()
-    ::Controller:getDispatchActions( ::Controller:Model )
-    //::Controller:View:showMenu( ::Controller:Model )
-    ::Controller:View:showEnd()
-    //::Controller:dispatchActions()
-
+    ::Controller:getView:showMainWindow( ::Controller:getModel )
+    ::Controller:getDispatchActions( ::Controller:getModel )
+    ::Controller:getView:showEnd()
 RETURN NIL

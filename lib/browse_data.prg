@@ -21,7 +21,7 @@ REQUEST HB_LANG_PT
 #include "hbclass.ch"
 #include "setcurs.ch"
 #include "tbrowse.ch"
-#include "../app/assets/custom_commands_v1.0.0.ch"
+#include "custom_commands_v1.0.0.ch"
 
 // Browse commands
 #define K_a 97
@@ -37,8 +37,8 @@ CLASS BrowseData
     EXPORTED:
         DATA nRow1                      AS  INTEGER INIT    08
         DATA nCol1                      AS  INTEGER INIT    03
-        DATA nRow2                      AS  INTEGER INIT    MaxRow()-2
-        DATA nCol2                      AS  INTEGER INIT    MaxCol()-2
+        DATA nRow2                      AS  INTEGER INIT    38
+        DATA nCol2                      AS  INTEGER INIT    128
         DATA cTitle                     AS  STRING  INIT    "Browse Data"
         DATA aColHeadings               AS  ARRAY   INIT    {"Id", "Message"}
         DATA aColValues                 AS  ARRAY   INIT    {{{1, "No data found"}}, 1}
@@ -85,12 +85,11 @@ METHOD New() CLASS BrowseData
     oTBrowse := TBrowse():New( ::Row1, ::Col1, ::Row2, ::Col2 )
 
     oTBrowse:cargo      := ::ColValues
-    oTBrowse:border     := B_SINGLE
+    oTBrowse:border     := B_DOUBLE
     oTBrowse:headSep    := HEAD_SEP
     oTBrowse:colSep     := COLUMN_SEP
     oTBrowse:footSep    := FOOT_SEP
-    //oTBrowse:colorSpec  := "W/N" //"W/B, W+/N, N/W*, W+/R,  R+/B, R/W*"
-    oTBrowse:colorSpec  := "W+/B, N/BG" // "W/N"
+    oTBrowse:colorSpec  := "W/N"
 
     // Navigation code blocks for array
     oTBrowse:goTopBlock    := {|| oTBrowse:recno := 1 }

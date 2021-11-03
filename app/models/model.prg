@@ -3,24 +3,18 @@
     Program......: model.prg
     Description..: Model Class
     Author.......: Sergio Lima
-    Updated at...: Oct, 2021
+    Updated at...: Nov, 2021
 */
 
 #include "hbclass.ch"
-#include "../assets/custom_commands_v1.0.0.ch"
+#include "hbver.ch"
+#include "../../lib/custom_commands_v1.0.0.ch"
 
-#define COMPANY_NAME "My Company"
-#define APP_VERSION "1.0.0"
-#define APP_NAME "My Application"
-#define MAX_COL 132 //(MaxCol()-3)
+#define MAX_COL 132
 #define MAX_ROW 40
 
 //------------------------------------------------------------------
 CLASS Model
-
-    DATA cCompanyName   AS  STRING  INIT    COMPANY_NAME
-    DATA cAppVersion    AS  STRING  INIT    APP_VERSION
-    DATA cAppName       AS  STRING  INIT    APP_NAME
     DATA nMaxCol        AS  INTEGER INIT    MAX_COL
     DATA nMaxRow        AS  INTEGER INIT    MAX_ROW
 
@@ -28,6 +22,15 @@ CLASS Model
         METHOD New() CONSTRUCTOR
         METHOD getAppNameTitle()
         METHOD getCenteredColumn(cText)
+        METHOD getBoxDim()
+        METHOD getDataBaseName()
+        METHOD getAppLocation()
+        METHOD getHarbourVersion()
+        METHOD getCompilerVersion()
+        METHOD getAppVersion()
+        METHOD getOS()
+        METHOD getCompanyName()
+        METHOD getAppName()
 
     HIDDEN:
         METHOD InitialSetup()
@@ -39,11 +42,52 @@ METHOD New() CLASS Model
     ::InitialSetup()
 RETURN Self
 
+METHOD getCompanyName() CLASS Model
+RETURN "My Company"
+
+METHOD getAppName() CLASS Model
+RETURN "My Application"
+
 METHOD getAppNameTitle() CLASS Model
-RETURN "*** " + ::cAppName + " ***"
+RETURN "*** " + ::getAppName + " ***"
 
 METHOD getCenteredColumn(cText) CLASS Model
 RETURN ((::nMaxCol - LEN(cText)) / 2)
+
+METHOD getBoxDim() CLASS Model
+    LOCAL hBox := {;
+        "nRow1" => 08   ,   ;
+        "nCol1" => 03   ,   ;
+        "nRow2" => 38   ,   ;
+        "nCol2" => 128      ;
+        }
+RETURN hBox
+
+METHOD getDataBaseName() CLASS Model
+RETURN "accounts_rec.s3db"
+
+METHOD getAppLocation() CLASS Model
+RETURN CurDir()
+
+METHOD getHarbourVersion() CLASS Model
+    LOCAL cHarbourInfo := ;
+        "Build Date bdate, major version:mjv, minor version:mnv, revision:rv"
+    LOCAL hHarbourInfo := { ;
+        "bdate" => hb_Version( HB_VERSION_COMPILER ),           ;
+        "mjv"   => ltrim(str(hb_Version( HB_VERSION_MAJOR ))),  ;
+        "mnv"   => ltrim(str(hb_Version( HB_VERSION_MINOR ))),  ;
+        "rv"    => hb_Version( HB_VERSION_RELEASE )             ;
+        }
+RETURN hb_StrReplace(cHarbourInfo, hHarbourInfo)
+
+METHOD getCompilerVersion() CLASS Model
+RETURN hb_Version( HB_VERSION_COMPILER )
+
+METHOD getAppVersion() CLASS Model
+RETURN "1.0.0"
+
+METHOD getOS() CLASS Model
+RETURN OS()
 
 METHOD InitialSetup() CLASS Model
     set( _SET_DATEFORMAT, "DD/MM/YYYY" )

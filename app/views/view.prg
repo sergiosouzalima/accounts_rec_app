@@ -7,7 +7,7 @@
 */
 
 #include "hbclass.ch"
-#include "../assets/custom_commands_v1.0.0.ch"
+#include "../../lib/custom_commands_v1.0.0.ch"
 #include "box.ch"
 
 //------------------------------------------------------------------
@@ -18,7 +18,6 @@ CLASS View
         METHOD  showEnd()
         METHOD  showMainMenu() VIRTUAL
         METHOD  showBox(nInitialRow, nInitialCol, nFinalRow, nFinalCol)
-        METHOD  clearBox(nInitialRow, nInitialCol, nFinalRow, nFinalCol)
 
 END CLASS
 
@@ -29,7 +28,7 @@ RETURN Self
 METHOD showMainWindow( oModel ) CLASS View
     __Clear()
     @ 00,00 TO 00, oModel:nMaxCol DOUBLE
-    @ 01,oModel:getCenteredColumn(oModel:cCompanyName) SAY oModel:cCompanyName
+    @ 01,oModel:getCenteredColumn(oModel:getCompanyName()) SAY oModel:getCompanyName()
     @ 02,oModel:getCenteredColumn(oModel:getAppNameTitle()) SAY oModel:getAppNameTitle()
     @ 03,00 TO 03, oModel:nMaxCol
     @ 04, oModel:nMaxCol - 10 SAY Date()
@@ -37,13 +36,8 @@ METHOD showMainWindow( oModel ) CLASS View
 RETURN NIL
 
 METHOD showBox(nInitialRow, nInitialCol, nFinalRow, nFinalCol, cTitle) CLASS View
-    @ nInitialRow, nInitialCol, nFinalRow, nFinalCol BOX B_DOUBLE_SINGLE + SPACE(1)
-    @ nInitialRow - 01, nInitialCol CLEAR TO nInitialRow - 01, nFinalCol
-    @ nInitialRow - 01, nInitialCol SAY "[ " + cTitle + " ]"
-RETURN NIL
-
-METHOD clearBox(nInitialRow, nInitialCol, nFinalRow, nFinalCol) CLASS View
-    @ nInitialRow - 01, nInitialCol CLEAR TO nFinalRow, nFinalCol
+    DispBox(nInitialRow, nInitialCol, nFinalRow, nFinalCol, B_DOUBLE_SINGLE + Chr(32), "W+/N")
+    @ nInitialRow, nInitialCol + 02 SAY "[ " + cTitle + " ]"
 RETURN NIL
 
 //------------------------------------------------------------------

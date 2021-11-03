@@ -7,16 +7,16 @@
 */
 
 #include "hbclass.ch"
-#include "../assets/custom_commands_v1.0.0.ch"
+#include "../../lib/custom_commands_v1.0.0.ch"
 
 //------------------------------------------------------------------
 CLASS Controller
-    DATA Controller AS OBJECT
+    //DATA Controller AS OBJECT
 
     EXPORTED:
         METHOD New() CONSTRUCTOR
-        METHOD Model( oModel ) SETGET
-        METHOD View( oView ) SETGET
+        METHOD getModel( oModel ) SETGET
+        METHOD getView( oView ) SETGET
         METHOD dispatchActions() VIRTUAL
 
     HIDDEN:
@@ -28,14 +28,14 @@ END CLASS
 //------------------------------------------------------------------
 // Constructor
 METHOD New( oView, oModel ) CLASS Controller
-    ::View := oView
-    ::Model := oModel
+    ::getView := oView
+    ::getModel := oModel
 RETURN Self
 
-METHOD Model( oModel ) CLASS Controller
+METHOD getModel( oModel ) CLASS Controller
     ::oModel := oModel IF hb_isObject(oModel)
 RETURN ::oModel
 
-METHOD View( oView ) CLASS Controller
+METHOD getView( oView ) CLASS Controller
     ::oView := oView IF hb_isObject(oView)
 RETURN ::oView
