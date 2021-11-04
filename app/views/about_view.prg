@@ -18,7 +18,7 @@ CLASS AboutView FROM View
 END CLASS
 
 METHOD Run( oModel ) CLASS AboutView
-    LOCAL nOpc := 0, hBox := oModel:getAboutBoxDim
+    LOCAL nOpc := 0, hBox := oModel:getAboutBoxDim()
 
     ::showBox(hBox["nRow1"], hBox["nCol1"], hBox["nRow2"], hBox["nCol2"], "Sobre")
 

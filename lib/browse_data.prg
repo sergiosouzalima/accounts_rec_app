@@ -24,12 +24,12 @@ REQUEST HB_LANG_PT
 #include "custom_commands_v1.0.0.ch"
 
 // Browse commands
-#define K_a 97
-#define K_A 65
-#define K_E 69
-#define K_e 101
-#define K_I 73
-#define K_i 105
+#define K_m 109 //  Modify
+#define K_M 77  //  Modify
+#define K_D 100 //  Delete
+#define K_d 68  //  Delete
+#define K_I 73  //  Insert
+#define K_i 105 //  Insert
 
 //------------------------------------------------------------------
 CLASS BrowseData
@@ -44,8 +44,8 @@ CLASS BrowseData
         DATA aColValues                 AS  ARRAY   INIT    {{{1, "No data found"}}, 1}
         DATA aColWidths                 AS  ARRAY   INIT    {10, 30}
         DATA nNumOfRecords              AS  INTEGER INIT    1
-        DATA cFooterMsg                 AS  STRING  INIT    "<ESC>-Exit"
-        DATA aAvailableKeys             AS  ARRAY   INIT    {K_ESC}
+        DATA cFooterMsg                 AS  STRING  INIT    "<ESC>=Exit | I=Insert | M=Modify | D=Delete"
+        DATA aAvailableKeys             AS  ARRAY   INIT    {K_ESC, K_M, K_m, K_D, K_d, K_I, K_i}
         DATA lLookup                    AS  LOGICAL INIT    .F.
         DATA nKeyPressed                AS  INTEGER INIT    0
         DATA nSelectedRecord            AS  INTEGER INIT    0
@@ -104,7 +104,18 @@ METHOD New() CLASS BrowseData
        oTBColumn:width := ::ColWidths[i]
        oTBrowse:addColumn( oTBColumn )
     NEXT
+
     ::oTBrowse := oTBrowse
+
+
+    IF !::lLookup
+        DispOutAt( ::Row1-1, ::Col1, PadR( ::Title, ::Col2 ), "N/W" )
+
+        DispOutAt( ::Row2 - 2, ::Col1 + 1, ;
+            PadR( "Total Records: " + ltrim(str(::NumOfRecords)) + " | " +::cFooterMsg), ;
+            "N/W" )
+    ENDIF
+
 RETURN Self
 
 METHOD Run() CLASS BrowseData

@@ -17,14 +17,17 @@ app/application.prg
 
 app/controllers/controller.prg
 app/controllers/application_controller.prg
+app/controllers/customer_controller.prg
 
 app/models/model.prg
 app/models/application_model.prg
 app/models/about_model.prg
+app/models/customer_model.prg
 
 app/views/view.prg
 app/views/application_view.prg
 app/views/about_view.prg
+app/views/customer_view.prg
 
 lib/browse_data.prg
 

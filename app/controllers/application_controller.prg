@@ -28,9 +28,11 @@ METHOD runAbout() CLASS ApplicationController
 RETURN NIL
 
 METHOD runCustomer() CLASS ApplicationController
-    LOCAL oBrowseData := BrowseData():New()
-    oBrowseData:Run()
-    oBrowseData := oBrowseData:Destroy()
+    LOCAL oView := CustomerView():New()
+    LOCAL oModel := CustomerModel():New()
+    LOCAL oController := CustomerController():New( oView, oModel )
+
+    oController:getDispatchActions()
 RETURN NIL
 
 METHOD getDispatchActions( oModel ) CLASS ApplicationController
