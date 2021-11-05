@@ -13,7 +13,7 @@
 CLASS CustomerView FROM View
 
     EXPORTED:
-        METHOD showCustomerBrowseData( oModel )
+        METHOD showCustomerBrowserData( oModel )
         METHOD getOption( nOption ) SETGET
         METHOD getSelectedRecord( nSelectedRecord ) SETGET
 
@@ -23,18 +23,21 @@ CLASS CustomerView FROM View
 
 END CLASS
 
-METHOD showCustomerBrowseData( oModel ) CLASS CustomerView
-    LOCAL hBox := oModel:getCustomerBoxDim()
-    LOCAL oBrowseData := BrowseData():New()
+METHOD showCustomerBrowserData( oModel ) CLASS CustomerView
+    LOCAL hBox := oModel:getBoxDimensions()
+    LOCAL oBrowseData := NIL
 
-    //::showBox(hBox["nRow1"], hBox["nCol1"], hBox["nRow2"], hBox["nCol2"], "Sobre")
+    ::clearBox(hBox)
 
-    oBrowseData:Run()
-    ::getOption := oBrowseData:nKeyPressed
-    ::getSelectedRecord := oBrowseData:nSelectedRecord
+    oBrowseData := BrowseData():New( hBox )
+    WITH OBJECT oBrowseData
+        :Run()
+        ::getOption := :nKeyPressed
+        ::getSelectedRecord := :nSelectedRecord
+    ENDWITH
     oBrowseData := oBrowseData:Destroy()
 
-    @hBox["nRow1"], hBox["nCol1"] CLEAR TO hBox["nRow2"], hBox["nCol2"]
+    ::clearBox(hBox)
 RETURN NIL
 
 METHOD getOption( nOption ) CLASS CustomerView

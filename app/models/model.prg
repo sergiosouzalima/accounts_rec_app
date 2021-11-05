@@ -22,7 +22,7 @@ CLASS Model
         METHOD New() CONSTRUCTOR
         METHOD getAppNameTitle()
         METHOD getCenteredColumn(cText)
-        METHOD getBoxDim()
+        METHOD getBoxDimensions()
         METHOD getDataBaseName()
         METHOD getAppLocation()
         METHOD getHarbourVersion()
@@ -54,7 +54,7 @@ RETURN "*** " + ::getAppName + " ***"
 METHOD getCenteredColumn(cText) CLASS Model
 RETURN ((::nMaxCol - LEN(cText)) / 2)
 
-METHOD getBoxDim() CLASS Model
+METHOD getBoxDimensions() CLASS Model
     LOCAL hBox := {;
         "nRow1" => 08   ,   ;
         "nCol1" => 03   ,   ;

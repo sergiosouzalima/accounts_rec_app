@@ -53,7 +53,7 @@ METHOD getDispatchActions() CLASS CustomerController
     LOCAL nChosenItem := 0
 
     Repeat
-        ::getView:showCustomerBrowseData( ::getModel )
+        ::getView:showCustomerBrowserData( ::getModel )
         nChosenItem := ::getView:getOption()
 
         // switch....

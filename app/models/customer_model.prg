@@ -12,10 +12,4 @@
 //------------------------------------------------------------------
 CLASS CustomerModel FROM Model
 
-    EXPORTED:
-        METHOD getCustomerBoxDim()
-
 END CLASS
-
-METHOD getCustomerBoxDim() CLASS CustomerModel
-RETURN ::getBoxDim()

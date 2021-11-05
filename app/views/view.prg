@@ -17,7 +17,8 @@ CLASS View
         METHOD  showMainWindow( oModel )
         METHOD  showEnd()
         METHOD  showMainMenu() VIRTUAL
-        METHOD  showBox(nInitialRow, nInitialCol, nFinalRow, nFinalCol)
+        METHOD  showBox(hBox, cTitle)
+        METHOD  clearBox( hBox )
 
 END CLASS
 
@@ -35,9 +36,13 @@ METHOD showMainWindow( oModel ) CLASS View
     @ 05,00 TO 05, oModel:nMaxCol DOUBLE
 RETURN NIL
 
-METHOD showBox(nInitialRow, nInitialCol, nFinalRow, nFinalCol, cTitle) CLASS View
-    DispBox(nInitialRow, nInitialCol, nFinalRow, nFinalCol, B_DOUBLE_SINGLE + Chr(32), "W+/N")
-    @ nInitialRow, nInitialCol + 02 SAY "[ " + cTitle + " ]"
+METHOD showBox(hBox, cTitle) CLASS View
+    DispBox(hBox["nRow1"], hBox["nCol1"], hBox["nRow2"], hBox["nCol2"], B_DOUBLE_SINGLE + Chr(32), "W+/N")
+    @hBox["nRow1"], hBox["nCol1"] + 02 SAY "[ " + cTitle + " ]"
+RETURN NIL
+
+METHOD clearBox( hBox ) CLASS View
+    @hBox["nRow1"], hBox["nCol1"] CLEAR TO hBox["nRow2"], hBox["nCol2"]
 RETURN NIL
 
 //------------------------------------------------------------------

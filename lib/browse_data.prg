@@ -37,7 +37,7 @@ CLASS BrowseData
     EXPORTED:
         DATA nRow1                      AS  INTEGER INIT    08
         DATA nCol1                      AS  INTEGER INIT    03
-        DATA nRow2                      AS  INTEGER INIT    38
+        DATA nRow2                      AS  INTEGER INIT    28
         DATA nCol2                      AS  INTEGER INIT    128
         DATA cTitle                     AS  STRING  INIT    "Browse Data"
         DATA aColHeadings               AS  ARRAY   INIT    {"Id", "Message"}
@@ -71,18 +71,29 @@ CLASS BrowseData
         DATA oTBrowse   AS  OBJECT  INIT    NIL
         METHOD ArraySkipper( nSkipRequest, oTBrowse )
         METHOD ArrayBlock( oTBrowse, nSubScript )
-
-        //ERROR HANDLER OnError( xParam )
+        METHOD MsgTopRow()
+        METHOD MsgTopCol()
+        METHOD MsgBottomRow()
+        METHOD MsgBottomCol()
+        METHOD BrowserTopRow()
+        METHOD BrowserTopCol()
+        METHOD BrowserBottomRow()
+        METHOD BrowserBottomCol()
 ENDCLASS
 
-METHOD New() CLASS BrowseData
+METHOD New( hBox ) CLASS BrowseData
     LOCAL i, bBlock, oTBrowse, oTBColumn
     LOCAL nHeadings := Len( ::ColHeadings )
 
     HB_CDPSELECT( 'PTISO' )
     HB_LANGSELECT( 'PT' )
 
-    oTBrowse := TBrowse():New( ::Row1, ::Col1, ::Row2, ::Col2 )
+    IF hb_IsHash(hBox)
+        ::nRow1 := hBox["nRow1"]    ;   ::nCol1 := hBox["nCol1"]
+        ::nRow2 := hBox["nRow2"]    ;   ::nCol2 := hBox["nCol2"]
+    ENDIF
+
+    oTBrowse := TBrowse():New( ::BrowserTopRow, ::BrowserTopCol, ::BrowserBottomRow, ::BrowserBottomCol )
 
     oTBrowse:cargo      := ::ColValues
     oTBrowse:border     := B_DOUBLE
@@ -106,21 +117,14 @@ METHOD New() CLASS BrowseData
     NEXT
 
     ::oTBrowse := oTBrowse
-
-
-    IF !::lLookup
-        DispOutAt( ::Row1-1, ::Col1, PadR( ::Title, ::Col2 ), "N/W" )
-
-        DispOutAt( ::Row2 - 2, ::Col1 + 1, ;
-            PadR( "Total Records: " + ltrim(str(::NumOfRecords)) + " | " +::cFooterMsg), ;
-            "N/W" )
-    ENDIF
-
 RETURN Self
 
 METHOD Run() CLASS BrowseData
     LOCAL oTBrowse := ::oTBrowse
     LOCAL nKey := 0, nSelectedRecord := 0
+
+    DispOutAt( ::MsgTopRow, ::MsgTopCol, ::Title, "N/W" )
+    DispOutAt( ::MsgBottomRow, ::MsgBottomCol, "Records: " + ltrim(str(::NumOfRecords)) + " | " +::cFooterMsg, "N/W" )
 
     // display browser and process user input
     Repeat
@@ -191,6 +195,30 @@ RETURN ::nKeyPressed
 METHOD SelectedRecord( nSelectedRecord ) CLASS BrowseData
     ::nSelectedRecord := nSelectedRecord IF hb_IsNumeric(nSelectedRecord)
 RETURN ::nSelectedRecord
+
+METHOD MsgTopRow() CLASS BrowseData
+RETURN ::Row1()
+
+METHOD MsgTopCol() CLASS BrowseData
+RETURN ::Col1() + 1
+
+METHOD MsgBottomRow() CLASS BrowseData
+RETURN ::Row2()
+
+METHOD MsgBottomCol() CLASS BrowseData
+RETURN ::Col1() + 1
+
+METHOD BrowserTopRow() CLASS BrowseData
+RETURN ::Row1() + 1
+
+METHOD BrowserTopCol() CLASS BrowseData
+RETURN ::Col1()
+
+METHOD BrowserBottomRow() CLASS BrowseData
+RETURN ::Row2() - 1
+
+METHOD BrowserBottomCol() CLASS BrowseData
+RETURN ::Col2()
 
 // This code block uses detached LOCAL variables to
 // access single elements of a two-dimensional array.

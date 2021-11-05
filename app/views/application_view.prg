@@ -21,11 +21,7 @@ END CLASS
 METHOD showMainMenu( hMainMenuBox, aMenuItems ) CLASS ApplicationView
     LOCAL i := 0
 
-    ::showBox( ;
-        hMainMenuBox["nRow1"], hMainMenuBox["nCol1"], ;
-        hMainMenuBox["nRow2"], hMainMenuBox["nCol2"], ;
-        hMainMenuBox["cTitle"]  ;
-    )
+    ::showBox( hMainMenuBox, hMainMenuBox["cTitle"] )
 
     FOR i := 1 TO LEN(aMenuItems)
         @ hMainMenuBox["nRow1"] + i, hMainMenuBox["nCol1"] + 2 PROMPT aMenuItems[i,01] message aMenuItems[i,02]

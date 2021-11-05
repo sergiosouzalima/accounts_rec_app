@@ -18,9 +18,9 @@ CLASS AboutView FROM View
 END CLASS
 
 METHOD Run( oModel ) CLASS AboutView
-    LOCAL nOpc := 0, hBox := oModel:getAboutBoxDim()
+    LOCAL nOpc := 0, hBox := oModel:getBoxDimensions()
 
-    ::showBox(hBox["nRow1"], hBox["nCol1"], hBox["nRow2"], hBox["nCol2"], "Sobre")
+    ::showBox(hBox, "Sobre")
 
     @10,06 SAY  "------ BANCO DE DADOS ------"
     @12,06 SAY  "NOME DO BANCO DE DADOS......: " + oModel:getDataBaseName()
@@ -40,5 +40,5 @@ METHOD Run( oModel ) CLASS AboutView
     PROMPT  "  Tecle <ENTER> para voltar "
     MENU TO nOpc
 
-    @hBox["nRow1"], hBox["nCol1"] CLEAR TO hBox["nRow2"], hBox["nCol2"]
+    ::clearBox(hBox)
 RETURN NIL
