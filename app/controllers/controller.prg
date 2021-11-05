@@ -7,7 +7,7 @@
 */
 
 #include "hbclass.ch"
-#include "../../lib/custom_commands_v1.0.0.ch"
+#include "custom_commands_v1.0.0.ch"
 
 //------------------------------------------------------------------
 CLASS Controller

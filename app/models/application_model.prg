@@ -7,7 +7,7 @@
 */
 
 #include "hbclass.ch"
-#include "../../lib/custom_commands_v1.0.0.ch"
+#include "custom_commands_v1.0.0.ch"
 
 //------------------------------------------------------------------
 CLASS ApplicationModel FROM Model
@@ -25,8 +25,14 @@ CLASS ApplicationModel FROM Model
             {"4 - SOBRE     ",  " INFORMACOES SOBRE O SISTEMA  "    },;
             {"5 - FIM       ",  "RETORNA AO SISTEMA OPERACIONAL"    }}
 
+        METHOD DBPrepare(cConnection)
         METHOD MainBox()
 END CLASS
+
+METHOD DBPrepare( cConnection ) CLASS ApplicationModel
+    LOCAL oPersistence := PersistenceDao():New(cConnection)
+    oPersistence := oPersistence:Destroy()
+RETURN NIL
 
 METHOD MainBox() CLASS ApplicationModel
     LOCAL hMainBox := {;

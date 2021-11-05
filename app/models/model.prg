@@ -8,7 +8,7 @@
 
 #include "hbclass.ch"
 #include "hbver.ch"
-#include "../../lib/custom_commands_v1.0.0.ch"
+#include "custom_commands_v1.0.0.ch"
 
 #define MAX_COL 132
 #define MAX_ROW 40
@@ -24,6 +24,7 @@ CLASS Model
         METHOD getCenteredColumn(cText)
         METHOD getBoxDimensions()
         METHOD getDataBaseName()
+        METHOD getDataBasePath()
         METHOD getAppLocation()
         METHOD getHarbourVersion()
         METHOD getCompilerVersion()
@@ -62,6 +63,9 @@ METHOD getBoxDimensions() CLASS Model
         "nCol2" => 128      ;
         }
 RETURN hBox
+
+METHOD getDataBasePath() CLASS Model
+RETURN ::getAppLocation() + "/db/"
 
 METHOD getDataBaseName() CLASS Model
 RETURN "accounts_rec.s3db"

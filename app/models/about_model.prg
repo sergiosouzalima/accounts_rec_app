@@ -7,19 +7,17 @@
 */
 
 #include "hbclass.ch"
-#include "../../lib/custom_commands_v1.0.0.ch"
+#include "custom_commands_v1.0.0.ch"
 
 //------------------------------------------------------------------
 CLASS AboutModel FROM Model
 
     EXPORTED:
-        METHOD getAboutBoxDim()
         METHOD getDataBaseLocation()
 
 END CLASS
 
-METHOD getAboutBoxDim() CLASS AboutModel
-RETURN ::getBoxDim()
-
 METHOD getDataBaseLocation() CLASS AboutModel
-RETURN iif(File(::getDataBaseName()), CurDir() , "not found")
+    LOCAL cDBPathDBName := ::getDataBasePath() + ::getDataBaseName()
+    hb_Alert(cDBPathDBName)
+RETURN iif(File(cDBPathDBName), cDBPathDBName , "not found")

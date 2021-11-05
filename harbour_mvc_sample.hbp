@@ -10,25 +10,31 @@
 -oharbour_mvc_sample
 {linux}-ldl
 -lpthread
+-ilib
+
+hbct.hbc
+hbsqlit3.hbc
+
+../hbexpect/lib/hbexpect.prg
+../datasourcedao_harbour/datasourcedao_class.prg
+../persistencedao_harbour/persistencedao_class.prg
+../utilities_harbour/utilities_class.prg
 
 harbour_mvc_sample.prg
-
 app/application.prg
-
 app/controllers/controller.prg
 app/controllers/application_controller.prg
 app/controllers/customer_controller.prg
-
 app/models/model.prg
 app/models/application_model.prg
 app/models/about_model.prg
 app/models/customer_model.prg
-
+app/models/customerdao_class.prg
+app/models/customer_class.prg
 app/views/view.prg
 app/views/application_view.prg
 app/views/about_view.prg
 app/views/customer_view.prg
-
 lib/browse_data.prg
 
 # Special parameters for LINUX/GTK

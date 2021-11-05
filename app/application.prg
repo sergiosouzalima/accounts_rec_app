@@ -7,7 +7,7 @@
 */
 
 #include "hbclass.ch"
-#include "../lib/custom_commands_v1.0.0.ch"
+#include "custom_commands_v1.0.0.ch"
 
 //------------------------------------------------------------------
 // Main Class
@@ -23,6 +23,8 @@ END CLASS
 METHOD New() CLASS Application
     LOCAL oView := ApplicationView():New()
     LOCAL oModel := ApplicationModel():New()
+
+    oModel:DBPrepare( oModel:getDataBasePath() + oModel:getDataBaseName() )
 
     ::Controller := ApplicationController():New( oView, oModel )
 RETURN Self
