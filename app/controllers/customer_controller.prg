@@ -50,7 +50,13 @@ METHOD getView( oView ) CLASS CustomerController
 RETURN ::oView
 
 METHOD getDispatchActions() CLASS CustomerController
-    LOCAL nChosenItem := 0
+    LOCAL nChosenItem := 0, oCustomer := NIL
+
+    oCustomer := Customer():New( ::getModel:getDBPathDBName() )
+    oCustomer:CreateTable()
+    oCustomer:CountAll()
+    oCustomer:FeedProperties()
+    hb_Alert("table empty") IF oCustomer:NumberOfRecords == 0
 
     Repeat
         ::getView:showCustomerBrowserData( ::getModel )
@@ -68,4 +74,5 @@ METHOD getDispatchActions() CLASS CustomerController
                 ::vista:operacionIncorrecta()*/
         end switch
     Until nChosenItem == K_ESC
+    oCustomer := oCustomer:Destroy()
 RETURN NIL

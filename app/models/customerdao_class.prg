@@ -138,6 +138,9 @@
     " FROM CUSTOMER" +;
     " ORDER BY CREATED_AT;"
 
+#define SQL_COUNT_ALL ;
+    "SELECT COUNT(*) AS NUMBER_OF_RECORDS FROM CUSTOMER;"
+
 CREATE CLASS CustomerDao INHERIT PersistenceDao
     EXPORTED:
         METHOD  New( cConnection ) CONSTRUCTOR
@@ -151,6 +154,7 @@ CREATE CLASS CustomerDao INHERIT PersistenceDao
         METHOD  FindByCustomerName( cCustomerName )
         METHOD  FindCustomerAvoidDup( cID, cCustomerName )
         METHOD  FindAll()
+        METHOD  CountAll()
         // ----------------
     PROTECTED:
 
@@ -226,6 +230,17 @@ METHOD FindById( cID ) CLASS CustomerDao
         BREAK IF Empty(cID)
         hRecord["#ID"] := cID
         ::FindBy( hRecord, SQL_FIND_BY_ID )
+    CATCH oError
+        ::Error := oError
+    ENDTRY
+RETURN NIL
+
+METHOD CountAll() CLASS CustomerDao
+    LOCAL oError := NIL, hRecord := { => }
+
+    TRY
+        ::InitStatusIndicators()
+        ::FindBy( hRecord, SQL_COUNT_ALL )
     CATCH oError
         ::Error := oError
     ENDTRY

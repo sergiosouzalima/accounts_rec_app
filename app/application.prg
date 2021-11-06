@@ -24,8 +24,6 @@ METHOD New() CLASS Application
     LOCAL oView := ApplicationView():New()
     LOCAL oModel := ApplicationModel():New()
 
-    oModel:DBPrepare( oModel:getDataBasePath() + oModel:getDataBaseName() )
-
     ::Controller := ApplicationController():New( oView, oModel )
 RETURN Self
 

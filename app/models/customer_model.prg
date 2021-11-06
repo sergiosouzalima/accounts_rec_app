@@ -10,6 +10,6 @@
 #include "custom_commands_v1.0.0.ch"
 
 //------------------------------------------------------------------
-CLASS CustomerModel FROM Model, Customer
+CLASS CustomerModel FROM Model
 
 END CLASS

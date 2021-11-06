@@ -21,20 +21,6 @@ CLASS ApplicationController FROM Controller
 
 END CLASS
 
-METHOD runAbout() CLASS ApplicationController
-    LOCAL oModel := AboutModel():New()
-    LOCAL oView := AboutView():New()
-    oView:Run(oModel)
-RETURN NIL
-
-METHOD runCustomer() CLASS ApplicationController
-    LOCAL oView := CustomerView():New()
-    LOCAL oModel := CustomerModel():New()
-    LOCAL oController := CustomerController():New( oView, oModel )
-
-    oController:getDispatchActions()
-RETURN NIL
-
 METHOD getDispatchActions( oModel ) CLASS ApplicationController
     LOCAL nChosenItem := 0
 
@@ -54,4 +40,18 @@ METHOD getDispatchActions( oModel ) CLASS ApplicationController
                 ::vista:operacionIncorrecta()*/
         end switch
     Until nChosenItem == 5
+RETURN NIL
+
+METHOD runAbout() CLASS ApplicationController
+    LOCAL oModel := AboutModel():New()
+    LOCAL oView := AboutView():New()
+    oView:Run(oModel)
+RETURN NIL
+
+METHOD runCustomer() CLASS ApplicationController
+    LOCAL oView := CustomerView():New()
+    LOCAL oModel := CustomerModel():New()
+    LOCAL oController := CustomerController():New( oView, oModel )
+
+    oController:getDispatchActions()
 RETURN NIL

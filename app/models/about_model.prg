@@ -18,6 +18,5 @@ CLASS AboutModel FROM Model
 END CLASS
 
 METHOD getDataBaseLocation() CLASS AboutModel
-    LOCAL cDBPathDBName := ::getDataBasePath() + ::getDataBaseName()
-    hb_Alert(cDBPathDBName)
+    LOCAL cDBPathDBName := ::getDBPathDBName()
 RETURN iif(File(cDBPathDBName), cDBPathDBName , "not found")

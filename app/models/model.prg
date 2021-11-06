@@ -32,6 +32,7 @@ CLASS Model
         METHOD getOS()
         METHOD getCompanyName()
         METHOD getAppName()
+        METHOD getDBPathDBName()
 
     HIDDEN:
         METHOD InitialSetup()
@@ -65,10 +66,13 @@ METHOD getBoxDimensions() CLASS Model
 RETURN hBox
 
 METHOD getDataBasePath() CLASS Model
-RETURN ::getAppLocation() + "/db/"
+RETURN "db"
 
 METHOD getDataBaseName() CLASS Model
 RETURN "accounts_rec.s3db"
+
+METHOD getDBPathDBName() CLASS Model
+RETURN ::getDataBasePath() + "/" + ::getDataBaseName()
 
 METHOD getAppLocation() CLASS Model
 RETURN CurDir()
