@@ -343,6 +343,7 @@ FUNCTION oCustomer_CountAll() FROM CONTEXT
 				oCustomer:CountAll()
 				oCustomer:FeedProperties()
 				context "Number Of Records" expect (oCustomer:NumberOfRecords) TO_BE( 3 )
+				context "Table empty?" expect (oCustomer:TableEmpty()) TO_BE_FALSY
 			enddescribe
 		enddescribe
 	enddescribe

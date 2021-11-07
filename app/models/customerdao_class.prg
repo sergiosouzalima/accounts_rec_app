@@ -155,6 +155,7 @@ CREATE CLASS CustomerDao INHERIT PersistenceDao
         METHOD  FindCustomerAvoidDup( cID, cCustomerName )
         METHOD  FindAll()
         METHOD  CountAll()
+        METHOD  TableEmpty()
         // ----------------
     PROTECTED:
 
@@ -245,6 +246,16 @@ METHOD CountAll() CLASS CustomerDao
         ::Error := oError
     ENDTRY
 RETURN NIL
+
+METHOD TableEmpty() CLASS CustomerDao
+    LOCAL oError := NIL//,  hRecord := { => }
+    TRY
+        ::CountAll()
+        ::FeedProperties()
+    CATCH oError
+        ::Error := oError
+    ENDTRY
+RETURN ::NumberOfRecords == 0
 
 METHOD FindByCustomerName( cCustomerName ) CLASS CustomerDao
     LOCAL oError := NIL,  hRecord := { => }

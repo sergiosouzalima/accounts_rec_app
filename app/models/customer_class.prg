@@ -28,7 +28,7 @@ CREATE CLASS Customer INHERIT CustomerDao
     DATA lValid                     AS LOGICAL  INIT .F.
     DATA cCreatedAt                 AS STRING   INIT ""
     DATA cUpdatedAt                 AS STRING   INIT ""
-    DATA nNumberOfRecords           AS INTEGER  INIT 0
+    //DATA nNumberOfRecords           AS INTEGER  INIT 0
 
     EXPORTED:
 		METHOD New( cConnection ) CONSTRUCTOR
@@ -48,7 +48,7 @@ CREATE CLASS Customer INHERIT CustomerDao
         METHOD CityStateInitials( cCityStateInitials ) SETGET
         METHOD CreatedAt( cCreatedAt ) SETGET
         METHOD UpdatedAt( cUpdatedAt ) SETGET
-        METHOD NumberOfRecords( nNumberOfRecords ) SETGET
+        //METHOD NumberOfRecords( nNumberOfRecords ) SETGET
         METHOD Destroy()
         METHOD Insert()
         METHOD Update( cID )
@@ -65,8 +65,6 @@ CREATE CLASS Customer INHERIT CustomerDao
         METHOD UpdateValidation()
         METHOD DeleteValidation(cID)
         METHOD SetPropsToRecordhHash()
-        METHOD getNumericValueFromHash( hHash, xKey )
-        METHOD getStringValueFromHash( hHash, xKey )
 
     ERROR HANDLER OnError( xParam )
 ENDCLASS
@@ -143,9 +141,9 @@ METHOD UpdatedAt( cUpdatedAt ) CLASS Customer
     ::cUpdatedAt := cUpdatedAt IF hb_IsString(cUpdatedAt)
 RETURN ::cUpdatedAt
 
-METHOD NumberOfRecords( nNumberOfRecords ) CLASS Customer
+/*METHOD NumberOfRecords( nNumberOfRecords ) CLASS Customer
     ::nNumberOfRecords := nNumberOfRecords IF hb_IsNumeric(nNumberOfRecords)
-RETURN ::nNumberOfRecords
+RETURN ::nNumberOfRecords*/
 
 METHOD Message( cMessage ) CLASS Customer
     ::cMessage := cMessage IF hb_IsString(cMessage)
@@ -325,39 +323,30 @@ METHOD ResetProperties() CLASS Customer
     ENDTRY
 RETURN lOk .AND. oError == NIL
 
-METHOD getNumericValueFromHash( hHash, xKey )
-    LOCAL nValue := 0, lHasKey := hb_hHasKey( hHash, xKey )
-    nValue := hb_Val(hHash[xKey]) IF lHasKey .AND. hb_IsNumeric(hb_Val(hHash[xKey]))
-RETURN nValue
-
-METHOD getStringValueFromHash( hHash, xKey )
-    LOCAL cValue := "", lHasKey := hb_hHasKey( hHash, xKey )
-    cValue := hHash[xKey] IF lHasKey .AND. hb_IsString(hHash[xKey])
-RETURN cValue
-
 METHOD FeedProperties() CLASS Customer
     LOCAL oError := NIL, lOk := .F.
-
+    LOCAL ahRecordSet := ::oCustomerDao:CustomerDao:RecordSet[01]
+    LOCAL oUtilities := Utilities():New()
 
     RETURN .F. IF ::oCustomerDao:CustomerDao:NotFound()
 
     TRY
-        ::Id                    := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "ID")
-        ::CustomerName          := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "CUSTOMER_NAME")
-        ::BirthDate             := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "BIRTH_DATE")
-        ::GenderId              := ::getnumericValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "GENDER_ID")
-        ::AddressDescription    := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "ADDRESS_DESCRIPTION")
-        ::CountryCodePhoneNumber:= ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "COUNTRY_CODE_PHONE_NUMBER")
-        ::AreaPhoneNumber       := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "AREA_PHONE_NUMBER")
-        ::PhoneNumber           := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "PHONE_NUMBER")
-        ::CustomerEmail         := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "CUSTOMER_EMAIL")
-        ::DocumentNumber        := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "DOCUMENT_NUMBER")
-        ::ZipCodeNumber         := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "ZIP_CODE_NUMBER")
-        ::CityName              := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "CITY_NAME")
-        ::CityStateInitials     := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "CITY_STATE_INITIALS")
-        ::CreatedAt             := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "CREATED_AT")
-        ::UpdatedAt             := ::getStringValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "UPDATED_AT")
-        ::NumberOfRecords       := ::getnumericValueFromHash(::oCustomerDao:CustomerDao:RecordSet[01], "NUMBER_OF_RECORDS")
+        ::Id                    := oUtilities:getStringValueFromHash (ahRecordSet, "ID")
+        ::CustomerName          := oUtilities:getStringValueFromHash (ahRecordSet, "CUSTOMER_NAME")
+        ::BirthDate             := oUtilities:getStringValueFromHash (ahRecordSet, "BIRTH_DATE")
+        ::GenderId              := oUtilities:getNumericValueFromHash(ahRecordSet, "GENDER_ID")
+        ::AddressDescription    := oUtilities:getStringValueFromHash (ahRecordSet, "ADDRESS_DESCRIPTION")
+        ::CountryCodePhoneNumber:= oUtilities:getStringValueFromHash (ahRecordSet, "COUNTRY_CODE_PHONE_NUMBER")
+        ::AreaPhoneNumber       := oUtilities:getStringValueFromHash (ahRecordSet, "AREA_PHONE_NUMBER")
+        ::PhoneNumber           := oUtilities:getStringValueFromHash (ahRecordSet, "PHONE_NUMBER")
+        ::CustomerEmail         := oUtilities:getStringValueFromHash (ahRecordSet, "CUSTOMER_EMAIL")
+        ::DocumentNumber        := oUtilities:getStringValueFromHash (ahRecordSet, "DOCUMENT_NUMBER")
+        ::ZipCodeNumber         := oUtilities:getStringValueFromHash (ahRecordSet, "ZIP_CODE_NUMBER")
+        ::CityName              := oUtilities:getStringValueFromHash (ahRecordSet, "CITY_NAME")
+        ::CityStateInitials     := oUtilities:getStringValueFromHash (ahRecordSet, "CITY_STATE_INITIALS")
+        ::CreatedAt             := oUtilities:getStringValueFromHash (ahRecordSet, "CREATED_AT")
+        ::UpdatedAt             := oUtilities:getStringValueFromHash (ahRecordSet, "UPDATED_AT")
+        ::NumberOfRecords       := oUtilities:getNumericValueFromHash(ahRecordSet, "NUMBER_OF_RECORDS")
         lOk := .T.
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
