@@ -10,7 +10,7 @@
 #include "custom_commands_v1.0.0.ch"
 
 CREATE CLASS Customer INHERIT CustomerDao
-    DATA cID                        AS STRING   INIT ""
+    //DATA cID                        AS STRING   INIT ""
 	DATA cCustomerName              AS STRING   INIT ""
     DATA nGenderId                  AS INTEGER  INIT 0
     DATA oGender                    AS Object   INIT NIL
@@ -24,15 +24,15 @@ CREATE CLASS Customer INHERIT CustomerDao
     DATA cZipCodeNumber             AS STRING   INIT ""
     DATA cCityName                  AS STRING   INIT ""
     DATA cCityStateInitials         AS STRING   INIT ""
-    DATA cMessage                   AS STRING   INIT ""
-    DATA lValid                     AS LOGICAL  INIT .F.
+    //DATA cMessage                   AS STRING   INIT ""
+    //DATA lValid                     AS LOGICAL  INIT .F.
     //DATA cCreatedAt                 AS STRING   INIT ""
     //DATA cUpdatedAt                 AS STRING   INIT ""
     //DATA nNumberOfRecords           AS INTEGER  INIT 0
 
     EXPORTED:
 		METHOD New( cConnection ) CONSTRUCTOR
-        METHOD Id( cID ) SETGET
+        //METHOD Id( cID ) SETGET
         METHOD CustomerName( cCustomerName ) SETGET
         METHOD GenderId( nGenderId ) SETGET
         METHOD Gender( oGender ) SETGET
@@ -55,8 +55,8 @@ CREATE CLASS Customer INHERIT CustomerDao
         METHOD Delete( cID )
         METHOD FeedProperties( ahRecordSet )
         METHOD ResetProperties()
-        METHOD Message( cMessage ) SETGET
-        METHOD Valid( lValid ) SETGET
+        //METHOD Message( cMessage ) SETGET
+        //METHOD Valid( lValid ) SETGET
 
     HIDDEN:
         DATA oCustomerDao   AS Object   INIT NIL
@@ -77,9 +77,9 @@ METHOD Destroy() CLASS Customer
     Self := NIL
 RETURN Self
 
-METHOD Id( cID ) CLASS Customer
+/*METHOD Id( cID ) CLASS Customer
     ::cID := cID IF hb_IsString(cID)
-RETURN ::cID
+RETURN ::cID*/
 
 METHOD CustomerName( cCustomerName ) CLASS Customer
     ::cCustomerName := cCustomerName IF hb_IsString(cCustomerName)
@@ -145,13 +145,13 @@ RETURN ::cUpdatedAt*/
     ::nNumberOfRecords := nNumberOfRecords IF hb_IsNumeric(nNumberOfRecords)
 RETURN ::nNumberOfRecords*/
 
-METHOD Message( cMessage ) CLASS Customer
+/*METHOD Message( cMessage ) CLASS Customer
     ::cMessage := cMessage IF hb_IsString(cMessage)
 RETURN ::cMessage
 
 METHOD Valid( lValid ) CLASS Customer
     ::lValid := lValid IF hb_isLogical(lValid)
-RETURN ::lValid
+RETURN ::lValid*/
 
 METHOD Insert() CLASS Customer
     LOCAL oError := NIL, hRecord := { => }
