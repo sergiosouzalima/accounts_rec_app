@@ -26,8 +26,8 @@ CREATE CLASS Customer INHERIT CustomerDao
     DATA cCityStateInitials         AS STRING   INIT ""
     DATA cMessage                   AS STRING   INIT ""
     DATA lValid                     AS LOGICAL  INIT .F.
-    DATA cCreatedAt                 AS STRING   INIT ""
-    DATA cUpdatedAt                 AS STRING   INIT ""
+    //DATA cCreatedAt                 AS STRING   INIT ""
+    //DATA cUpdatedAt                 AS STRING   INIT ""
     //DATA nNumberOfRecords           AS INTEGER  INIT 0
 
     EXPORTED:
@@ -46,8 +46,8 @@ CREATE CLASS Customer INHERIT CustomerDao
         METHOD ZipCodeNumber( cZipCodeNumber ) SETGET
         METHOD CityName( cCityName ) SETGET
         METHOD CityStateInitials( cCityStateInitials ) SETGET
-        METHOD CreatedAt( cCreatedAt ) SETGET
-        METHOD UpdatedAt( cUpdatedAt ) SETGET
+        //METHOD CreatedAt( cCreatedAt ) SETGET
+        //METHOD UpdatedAt( cUpdatedAt ) SETGET
         //METHOD NumberOfRecords( nNumberOfRecords ) SETGET
         METHOD Destroy()
         METHOD Insert()
@@ -133,13 +133,13 @@ METHOD CityStateInitials( cCityStateInitials ) CLASS Customer
     ::cCityStateInitials := cCityStateInitials IF hb_IsString(cCityStateInitials)
 RETURN ::cCityStateInitials
 
-METHOD CreatedAt( cCreatedAt ) CLASS Customer
+/*METHOD CreatedAt( cCreatedAt ) CLASS Customer
     ::cCreatedAt := cCreatedAt IF hb_IsString(cCreatedAt)
 RETURN ::cCreatedAt
 
 METHOD UpdatedAt( cUpdatedAt ) CLASS Customer
     ::cUpdatedAt := cUpdatedAt IF hb_IsString(cUpdatedAt)
-RETURN ::cUpdatedAt
+RETURN ::cUpdatedAt*/
 
 /*METHOD NumberOfRecords( nNumberOfRecords ) CLASS Customer
     ::nNumberOfRecords := nNumberOfRecords IF hb_IsNumeric(nNumberOfRecords)
