@@ -20,8 +20,9 @@ hbsqlit3.hbc
 ../../persistencedao_harbour/persistencedao_class.prg
 ../../utilities_harbour/utilities_class.prg
 
-../app/models/customer_class.prg
+../app/models/customer_model.prg
 ../app/models/customerdao_class.prg
+../app/models/model.prg
 customer_test.prg
 
 # Special parameters for LINUX/GTK

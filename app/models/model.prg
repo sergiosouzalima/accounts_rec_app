@@ -14,11 +14,12 @@
 #define MAX_ROW 40
 
 //------------------------------------------------------------------
-CLASS Model
-    DATA nMaxCol        AS  INTEGER INIT    MAX_COL
-    DATA nMaxRow        AS  INTEGER INIT    MAX_ROW
+CREATE CLASS Model INHERIT CustomerModel
 
     EXPORTED:
+        DATA nMaxCol        AS  INTEGER INIT    MAX_COL
+        DATA nMaxRow        AS  INTEGER INIT    MAX_ROW
+
         METHOD New() CONSTRUCTOR
         METHOD getAppNameTitle()
         METHOD getCenteredColumn(cText)

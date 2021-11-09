@@ -19,10 +19,10 @@
 #define K_i 105 //  Insert
 
 //------------------------------------------------------------------
-CLASS CustomerController FROM Controller
+CLASS CustomerController FROM ApplicationController
 
     EXPORTED:
-        METHOD New() CONSTRUCTOR
+        METHOD New( oView, oModel ) CONSTRUCTOR
         METHOD getModel( oModel ) SETGET
         METHOD getView( oView ) SETGET
         METHOD dispatchActions() VIRTUAL
@@ -52,7 +52,7 @@ RETURN ::oView
 METHOD getDispatchActions() CLASS CustomerController
     LOCAL nChosenItem := 0, oCustomer := NIL
 
-    oCustomer := Customer():New( ::getModel:getDBPathDBName() )
+    oCustomer := CustomerModel():New( ::getModel:getDBPathDBName() )
     oCustomer:CreateTable()
     oCustomer:InsertFakeCustomer() IF oCustomer:TableEmpty()
 

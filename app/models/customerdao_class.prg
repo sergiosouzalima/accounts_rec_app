@@ -178,8 +178,6 @@ CREATE CLASS CustomerDao INHERIT PersistenceDao
         METHOD  CountAll()
         METHOD  FindFirst()
         METHOD  TableEmpty()
-        // ----------------
-    PROTECTED:
 
     HIDDEN:
         DATA oPersistenceDao   AS Object   INIT NIL

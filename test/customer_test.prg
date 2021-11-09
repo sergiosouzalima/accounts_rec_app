@@ -27,10 +27,10 @@ FUNCTION Main()
 
 		describe "Customer Class"
 
-			oCustomer := Customer():New()
+			oCustomer := CustomerModel():New()
 			describe "When instantiate"
-				describe "Customer():New( [cDataBaseName] ) --> oCustomer"
-					context "and oCustomer's Class Name" expect(oCustomer) TO_BE_CLASS_NAME("Customer")
+				describe "CustomerModel():New( [cDataBaseName] ) --> oCustomer"
+					context "and oCustomer's Class Name" expect(oCustomer) TO_BE_CLASS_NAME("CustomerModel")
 					context "and value of oCustomer" expect(oCustomer) NOT_TO_BE_NIL
 					context "and value of oCustomer" expect(oCustomer) TO_BE_OBJECT_TYPE
 				enddescribe
@@ -75,7 +75,7 @@ RETURN NIL
 FUNCTION oCustomer_Insert() FROM CONTEXT
 	LOCAL oCustomer := NIL
 
-	oCustomer := Customer():New()
+	oCustomer := CustomerModel():New()
 	describe "When invalid data to insert"
 		describe "CustomerName"
 			seed_costumer_fields(oCustomer)
@@ -135,7 +135,7 @@ RETURN NIL
 FUNCTION oCustomer_FindBy() FROM CONTEXT
 	LOCAL oCustomer := NIL, cGUID := ""
 
-	oCustomer := Customer():New()
+	oCustomer := CustomerModel():New()
 	describe "oCustomer:FindFirst()"
 		describe "oCustomer:FeedProperties()"
 			oCustomer:FindFirst()
@@ -146,7 +146,7 @@ FUNCTION oCustomer_FindBy() FROM CONTEXT
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
-	oCustomer := Customer():New()
+	oCustomer := CustomerModel():New()
 	describe "oCustomer:FindById( cGUID )"
 		describe "oCustomer:FeedProperties()"
 			oCustomer:FindById( cGUID )
@@ -156,7 +156,7 @@ FUNCTION oCustomer_FindBy() FROM CONTEXT
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
-	oCustomer := Customer():New()
+	oCustomer := CustomerModel():New()
 	describe "oCustomer:FindByCustomerName( cCustomerName )"
 		describe "oCustomer:FeedProperties()"
 			oCustomer:FindByCustomerName( "PRIMEIRO CLIENTE" )
@@ -166,7 +166,7 @@ FUNCTION oCustomer_FindBy() FROM CONTEXT
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
-	oCustomer := Customer():New()
+	oCustomer := CustomerModel():New()
 	describe "oCustomer:FindById( cID )"
 		oCustomer:FindById( 999 )
 		describe "When Id doesn't exist"
@@ -175,7 +175,7 @@ FUNCTION oCustomer_FindBy() FROM CONTEXT
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
-	oCustomer := Customer():New()
+	oCustomer := CustomerModel():New()
 	describe "oCustomer:FindByCustomerName( cCustomerName )"
 		oCustomer:FindByCustomerName( "CLIENTE NAO CADASTRADO" )
 		describe "When Customer Name doesn't exist"
@@ -189,7 +189,7 @@ RETURN NIL
 FUNCTION oCustomer_FindAll() FROM CONTEXT
 	LOCAL oCustomer := NIL, aIDs := {}
 
-	oCustomer := Customer():New()
+	oCustomer := CustomerModel():New()
 	seed_costumer_fields(oCustomer)
 	with object oCustomer
 		:CustomerName := "SEGUNDO CLIENTE"
@@ -215,7 +215,7 @@ RETURN aIDs
 FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 	LOCAL oCustomer := NIL, cID4 := ""
 
-	oCustomer := Customer():New()
+	oCustomer := CustomerModel():New()
 	describe "When invalid data to update"
 		seed_costumer_fields(oCustomer)
 		describe "CustomerName"
@@ -313,7 +313,7 @@ RETURN NIL
 FUNCTION oCustomer_Delete(aIDs) FROM CONTEXT
 	LOCAL oCustomer := NIL
 
-	oCustomer := Customer():New()
+	oCustomer := CustomerModel():New()
 	describe "When invalid data to delete"
 		describe "oCustomer:Delete( 9999 )"
 			oCustomer:Delete( "9999" )
@@ -338,7 +338,7 @@ RETURN NIL
 FUNCTION oCustomer_CountAll() FROM CONTEXT
 	LOCAL oCustomer := NIL
 
-	oCustomer := Customer():New()
+	oCustomer := CustomerModel():New()
 	describe "When counting all records"
 		describe "oCustomer:CountAll()"
 			oCustomer:CountAll()
