@@ -54,7 +54,7 @@ METHOD getDispatchActions() CLASS CustomerController
 
     oCustomer := Customer():New( ::getModel:getDBPathDBName() )
     oCustomer:CreateTable()
-    hb_Alert("table empty") IF oCustomer:TableEmpty()
+    oCustomer:InsertFakeCustomer() IF oCustomer:TableEmpty()
 
     Repeat
         ::getView:showCustomerBrowserData( ::getModel )

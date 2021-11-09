@@ -45,6 +45,7 @@ CREATE CLASS Customer INHERIT CustomerDao
         METHOD Delete( cID )
         METHOD FeedProperties( ahRecordSet )
         METHOD ResetProperties()
+        METHOD InsertFakeCustomer()
 
     HIDDEN:
         DATA oCustomerDao   AS Object   INIT NIL
@@ -262,7 +263,7 @@ METHOD SetPropsToRecordhHash(hRecord) CLASS Customer
 RETURN hRecord
 
 METHOD ResetProperties() CLASS Customer
-    LOCAL oError := NIL, lOk := .F.
+    LOCAL oError := NIL
 
     TRY
         ::Id                    := ""
@@ -281,14 +282,13 @@ METHOD ResetProperties() CLASS Customer
         ::CreatedAt             := ""
         ::UpdatedAt             := ""
         ::NumberOfRecords       := 0
-        lOk := .T.
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
     ENDTRY
-RETURN lOk .AND. oError == NIL
+RETURN NIL
 
 METHOD FeedProperties() CLASS Customer
-    LOCAL oError := NIL, lOk := .F.
+    LOCAL oError := NIL
     LOCAL ahRecordSet := NIL, oUtilities := Utilities():New()
 
     RETURN .F. IF ::oCustomerDao:CustomerDao:NotFound()
@@ -311,11 +311,34 @@ METHOD FeedProperties() CLASS Customer
         ::CreatedAt             := oUtilities:getStringValueFromHash (ahRecordSet, "CREATED_AT")
         ::UpdatedAt             := oUtilities:getStringValueFromHash (ahRecordSet, "UPDATED_AT")
         ::NumberOfRecords       := oUtilities:getNumericValueFromHash(ahRecordSet, "NUMBER_OF_RECORDS")
-        lOk := .T.
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
     ENDTRY
-RETURN lOk .AND. oError == NIL
+RETURN NIL
+
+METHOD InsertFakeCustomer() CLASS Customer
+    LOCAL oError := NIL
+    TRY
+        WITH OBJECT Self
+            :CustomerName := "JOAO DA SILVA."
+            :BirthDate := "22/01/1980"
+            :GenderId := 2
+            :AddressDescription := "5th AV, 505"
+            :CountryCodePhoneNumber := "55"
+            :AreaPhoneNumber := "11"
+            :PhoneNumber := "555-55555"
+            :CustomerEmail := "nome-cliente@mail.com"
+            :DocumentNumber := "99876999-99"
+            :ZipCodeNumber := "04058-000"
+            :CityName := "Sao Paulo"
+            :CityStateInitials := "SP"
+        ENDWITH
+        ::Insert()
+        ::ResetProperties()
+    CATCH oError
+        ::oCustomerDao:CustomerDao:Error := oError
+    ENDTRY
+RETURN NIL
 
 METHOD ONERROR( xParam ) CLASS Customer
     LOCAL cCol := __GetMessage(), xResult
