@@ -55,9 +55,6 @@ METHOD getDispatchActions() CLASS CustomerController
     oCustomer := Customer():New( ::getModel:getDBPathDBName() )
     oCustomer:CreateTable()
     hb_Alert("table empty") IF oCustomer:TableEmpty()
-    //oCustomer:CountAll()
-    //oCustomer:FeedProperties()
-    //hb_Alert("table empty") IF oCustomer:NumberOfRecords == 0
 
     Repeat
         ::getView:showCustomerBrowserData( ::getModel )

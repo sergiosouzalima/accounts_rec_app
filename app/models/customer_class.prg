@@ -10,7 +10,6 @@
 #include "custom_commands_v1.0.0.ch"
 
 CREATE CLASS Customer INHERIT CustomerDao
-    //DATA cID                        AS STRING   INIT ""
 	DATA cCustomerName              AS STRING   INIT ""
     DATA nGenderId                  AS INTEGER  INIT 0
     DATA oGender                    AS Object   INIT NIL

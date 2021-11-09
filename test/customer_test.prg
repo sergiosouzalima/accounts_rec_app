@@ -22,11 +22,6 @@ FUNCTION Main()
 		LOCAL oCustomer, ahRecordSet := {}
 		LOCAL oUtilities := Utilities():New()
 		LOCAL aIDs := {}
-		/*LOCAL aGUID := {oUtilities:GetGUID(), ;
-			oUtilities:GetGUID(),	;
-			oUtilities:GetGUID(), 	;
-			oUtilities:GetGUID() 	;
-		}*/
 
 		hb_vfErase("ar_app.s3db")
 
