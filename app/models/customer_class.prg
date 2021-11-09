@@ -53,7 +53,7 @@ CREATE CLASS Customer INHERIT CustomerDao
         METHOD InsertValidation()
         METHOD UpdateValidation()
         METHOD DeleteValidation(cID)
-        METHOD SetPropsToRecordhHash()
+        METHOD SetPropsToRecordHash()
 
     ERROR HANDLER OnError( xParam )
 ENDCLASS
@@ -124,7 +124,7 @@ METHOD Insert() CLASS Customer
     TRY
         ::Validation()
         ::InsertValidation() IF ::Valid
-        hRecord := ::SetPropsToRecordhHash(hRecord) IF ::Valid
+        hRecord := ::SetPropsToRecordHash(hRecord) IF ::Valid
 
         IF ::Valid
             ::oCustomerDao:CustomerDao:Insert(hRecord)
@@ -141,7 +141,7 @@ METHOD Update(cID) CLASS Customer
     TRY
         ::Validation()
         ::UpdateValidation(cID) IF ::Valid
-        hRecord := ::SetPropsToRecordhHash(hRecord) IF ::Valid
+        hRecord := ::SetPropsToRecordHash(hRecord) IF ::Valid
 
         IF ::Valid
             ::oCustomerDao:CustomerDao:Update(cID, hRecord)
@@ -244,7 +244,7 @@ METHOD DeleteValidation(cID) CLASS Customer
     ENDTRY
 RETURN NIL
 
-METHOD SetPropsToRecordhHash(hRecord) CLASS Customer
+METHOD SetPropsToRecordHash(hRecord) CLASS Customer
     hRecord := { ;
         "#ID"                           =>  ::Id, ;
         "#CUSTOMER_NAME"                =>  ::CustomerName, ;

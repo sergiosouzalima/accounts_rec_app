@@ -188,7 +188,7 @@ CREATE CLASS CustomerDao INHERIT PersistenceDao
 ENDCLASS
 
 METHOD New( cConnection ) CLASS CustomerDao
-    ::oPersistenceDao := ::Super:New( hb_defaultValue(cConnection, "ar_app.s3db") )
+    ::oPersistenceDao := ::Super:New( hb_defaultValue(cConnection, "database.s3db") )
 RETURN Self
 
 METHOD Destroy() CLASS CustomerDao
@@ -271,7 +271,7 @@ METHOD CountAll() CLASS CustomerDao
 RETURN NIL
 
 METHOD TableEmpty() CLASS CustomerDao
-    LOCAL oError := NIL//,  hRecord := { => }
+    LOCAL oError := NIL
     TRY
         ::CountAll()
         ::FeedProperties()
