@@ -141,6 +141,27 @@
 #define SQL_COUNT_ALL ;
     "SELECT COUNT(*) AS NUMBER_OF_RECORDS FROM CUSTOMER;"
 
+#define SQL_FIRST ;
+    "SELECT" +;
+    " ID," +;
+    " CUSTOMER_NAME," +;
+    " BIRTH_DATE," +;
+    " GENDER_ID," +;
+    " ADDRESS_DESCRIPTION," +;
+    " COUNTRY_CODE_PHONE_NUMBER," +;
+    " AREA_PHONE_NUMBER," +;
+    " PHONE_NUMBER," +;
+    " CUSTOMER_EMAIL," +;
+    " DOCUMENT_NUMBER," +;
+    " ZIP_CODE_NUMBER," +;
+    " CITY_NAME," +;
+    " CITY_STATE_INITIALS," +;
+    " CREATED_AT," +;
+    " UPDATED_AT" +;
+    " FROM CUSTOMER" +;
+    " ORDER BY CREATED_AT" +;
+    " LIMIT 1;"
+
 CREATE CLASS CustomerDao INHERIT PersistenceDao
     EXPORTED:
         METHOD  New( cConnection ) CONSTRUCTOR
@@ -155,6 +176,7 @@ CREATE CLASS CustomerDao INHERIT PersistenceDao
         METHOD  FindCustomerAvoidDup( cID, cCustomerName )
         METHOD  FindAll()
         METHOD  CountAll()
+        METHOD  FindFirst()
         METHOD  TableEmpty()
         // ----------------
     PROTECTED:
@@ -184,11 +206,12 @@ METHOD CreateTable() CLASS CustomerDao
 RETURN NIL
 
 METHOD Insert( hRecord ) CLASS CustomerDao
-    LOCAL oError := NIL
+    LOCAL oError := NIL, oUtilities := Utilities():New()
     TRY
         ::InitStatusIndicators()
         BREAK IF Empty(hRecord)
-        hRecord["#CREATED_AT"] := Utilities():New():GetTimeStamp()
+        hRecord["#ID"] := oUtilities:GetGUID()
+        hRecord["#CREATED_AT"] := oUtilities:GetTimeStamp()
         hRecord["#UPDATED_AT"] := hRecord["#CREATED_AT"]
         ::ExecuteCommand( hb_StrReplace( SQL_INSERT, hRecord ) )
     CATCH oError
@@ -290,6 +313,17 @@ METHOD FindAll() CLASS CustomerDao
     TRY
         ::InitStatusIndicators()
         ::FindBy( hRecord, SQL_ALL )
+    CATCH oError
+        ::Error := oError
+    ENDTRY
+RETURN NIL
+
+METHOD FindFirst() CLASS CustomerDao
+    LOCAL oError := NIL,  hRecord := { => }
+
+    TRY
+        ::InitStatusIndicators()
+        ::FindBy( hRecord, SQL_FIRST )
     CATCH oError
         ::Error := oError
     ENDTRY

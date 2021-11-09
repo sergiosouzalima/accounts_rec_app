@@ -21,11 +21,12 @@ FUNCTION Main()
 	begin hbexpect
 		LOCAL oCustomer, ahRecordSet := {}
 		LOCAL oUtilities := Utilities():New()
-		LOCAL aGUID := {oUtilities:GetGUID(), ;
+		LOCAL aIDs := {}
+		/*LOCAL aGUID := {oUtilities:GetGUID(), ;
 			oUtilities:GetGUID(),	;
 			oUtilities:GetGUID(), 	;
 			oUtilities:GetGUID() 	;
-		}
+		}*/
 
 		hb_vfErase("ar_app.s3db")
 
@@ -47,23 +48,23 @@ FUNCTION Main()
 			oCustomer := oCustomer:Destroy()
 
 			describe "oCustomer:Insert()"
-				oCustomer_Insert(aGUID) WITH CONTEXT
+				oCustomer_Insert() WITH CONTEXT
 			enddescribe
 
 			describe "oCustomer:FindAll()"
-				oCustomer_FindAll(aGUID) WITH CONTEXT
+				aIDs := oCustomer_FindAll() WITH CONTEXT
 			enddescribe
 
 			describe "FindBy Methods"
-				oCustomer_FindBy(aGUID) WITH CONTEXT
+				oCustomer_FindBy() WITH CONTEXT
 			enddescribe
 
 			describe "oCustomer:Update( cId )"
-				oCustomer_Update(aGUID) WITH CONTEXT
+				oCustomer_Update( aIDs ) WITH CONTEXT
 			enddescribe
 
 			describe "oCustomer:Delete( cId )"
-				oCustomer_Delete(aGUID) WITH CONTEXT
+				oCustomer_Delete( aIDs ) WITH CONTEXT
 			enddescribe
 
 			describe "oCustomer:CountAll()"
@@ -76,13 +77,13 @@ FUNCTION Main()
 
 RETURN NIL
 
-FUNCTION oCustomer_Insert(aGUID) FROM CONTEXT
+FUNCTION oCustomer_Insert() FROM CONTEXT
 	LOCAL oCustomer := NIL
 
 	oCustomer := Customer():New()
 	describe "When invalid data to insert"
 		describe "CustomerName"
-			seed_costumer_fields(oCustomer, aGUID[1])
+			seed_costumer_fields(oCustomer)
 			oCustomer:CustomerName := ""
 			oCustomer:Insert()
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
@@ -115,7 +116,7 @@ FUNCTION oCustomer_Insert(aGUID) FROM CONTEXT
 	enddescribe
 
 	describe "When valid data to insert"
-		seed_costumer_fields(oCustomer, aGUID[1])
+		seed_costumer_fields(oCustomer)
 		oCustomer:Insert()
 		context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_TRUTHY
@@ -136,13 +137,24 @@ FUNCTION oCustomer_Insert(aGUID) FROM CONTEXT
 RETURN NIL
 
 
-FUNCTION oCustomer_FindBy(aGUID) FROM CONTEXT
-	LOCAL oCustomer := NIL
+FUNCTION oCustomer_FindBy() FROM CONTEXT
+	LOCAL oCustomer := NIL, cGUID := ""
 
 	oCustomer := Customer():New()
-	describe "oCustomer:FindById( cId )"
+	describe "oCustomer:FindFirst()"
 		describe "oCustomer:FeedProperties()"
-			oCustomer:FindById( aGUID[1] )
+			oCustomer:FindFirst()
+			oCustomer:FeedProperties()
+			cGUID := oCustomer:Id
+			check_properties( oCustomer ) WITH CONTEXT
+		enddescribe
+	enddescribe
+	oCustomer := oCustomer:Destroy()
+
+	oCustomer := Customer():New()
+	describe "oCustomer:FindById( cGUID )"
+		describe "oCustomer:FeedProperties()"
+			oCustomer:FindById( cGUID )
 			oCustomer:FeedProperties()
 			check_properties( oCustomer ) WITH CONTEXT
 		enddescribe
@@ -179,11 +191,11 @@ FUNCTION oCustomer_FindBy(aGUID) FROM CONTEXT
 	oCustomer := oCustomer:Destroy()
 RETURN NIL
 
-FUNCTION oCustomer_FindAll(aGUID) FROM CONTEXT
-	LOCAL oCustomer := NIL
+FUNCTION oCustomer_FindAll() FROM CONTEXT
+	LOCAL oCustomer := NIL, aIDs := {}
 
 	oCustomer := Customer():New()
-	seed_costumer_fields(oCustomer, aGUID[2])
+	seed_costumer_fields(oCustomer)
 	with object oCustomer
 		:CustomerName := "SEGUNDO CLIENTE"
 	endwith
@@ -201,18 +213,19 @@ FUNCTION oCustomer_FindAll(aGUID) FROM CONTEXT
 			enddescribe
 		enddescribe
 	enddescribe
+	aIDs := { oCustomer:RecordSet[01]["ID"], oCustomer:RecordSet[02]["ID"] }
 	oCustomer := oCustomer:Destroy()
-RETURN NIL
+RETURN aIDs
 
-FUNCTION oCustomer_Update(aGUID) FROM CONTEXT
-	LOCAL oCustomer := NIL
+FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
+	LOCAL oCustomer := NIL, cID4 := ""
 
 	oCustomer := Customer():New()
 	describe "When invalid data to update"
 		seed_costumer_fields(oCustomer)
 		describe "CustomerName"
 			oCustomer:CustomerName := ""
-			oCustomer:Update( aGUID[1] )
+			oCustomer:Update( aIDs[1] )
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Nome do Cliente nao informado!")
@@ -223,7 +236,7 @@ FUNCTION oCustomer_Update(aGUID) FROM CONTEXT
 				:CustomerName := "PRIMEIRO CLIENTE"
 				:BirthDate := ""
 			endwith
-			oCustomer:Update( aGUID[1] )
+			oCustomer:Update( aIDs[1] )
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Data de Nascimento do Cliente nao informada!")
@@ -235,7 +248,7 @@ FUNCTION oCustomer_Update(aGUID) FROM CONTEXT
 				:BirthDate := "22/01/1980"
 				:GenderId  := 0
 			endwith
-			oCustomer:Update( aGUID[1] )
+			oCustomer:Update( aIDs[1] )
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Genero do Cliente nao informado!")
@@ -243,11 +256,11 @@ FUNCTION oCustomer_Update(aGUID) FROM CONTEXT
 	enddescribe
 
 	describe "When valid data to update"
-		seed_costumer_fields(oCustomer, aGUID)
+		seed_costumer_fields(oCustomer)
 		with object oCustomer
 			:CustomerName := "PRIMEIRO CLIENTE MUDOU DE NOME"
 		endwith
-		oCustomer:Update( aGUID[1] )
+		oCustomer:Update( aIDs[1] )
 		context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_TRUTHY
 		context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente alterado com sucesso!")
@@ -257,7 +270,6 @@ FUNCTION oCustomer_Update(aGUID) FROM CONTEXT
 		describe "Insert third customer"
 			seed_costumer_fields(oCustomer)
 			with object oCustomer
-				:ID := aGUID[3]
 				:CustomerName := "TERCEIRO CLIENTE"
 			endwith
 			oCustomer:Insert()
@@ -265,7 +277,7 @@ FUNCTION oCustomer_Update(aGUID) FROM CONTEXT
 		with object oCustomer
 			:CustomerName := "TERCEIRO CLIENTE"
 		endwith
-		oCustomer:Update( aGUID[1] )
+		oCustomer:Update( aIDs[1] )
 		context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 		context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente ja cadastrado com este nome!")
@@ -275,24 +287,26 @@ FUNCTION oCustomer_Update(aGUID) FROM CONTEXT
 		describe "Insert third customer"
 			seed_costumer_fields(oCustomer)
 			with object oCustomer
-				:ID := aGUID[4]
 				:CustomerName := "QUARTO CLIENTE"
 			endwith
 			oCustomer:Insert()
+			oCustomer:FindByCustomerName( "QUARTO CLIENTE" )
+			oCustomer:FeedProperties()
+			cID4 := oCustomer:Id
 		enddescribe
-		with object oCustomer
-			:CustomerName := "QUARTO CLIENTE COM NOME ALTERADO"
-		endwith
 		hb_idleSleep(1)
-		describe "oCustomer:Update( 4 )"
-			oCustomer:Update( aGUID[4] )
+		describe "oCustomer:Update( cID4 )"
+			with object oCustomer
+				:CustomerName := "QUARTO CLIENTE COM NOME ALTERADO"
+			endwith
+			oCustomer:Update( cID4 )
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_TRUTHY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente alterado com sucesso!")
 		enddescribe
-		describe "oCustomer:FindById( 4 )" ; enddescribe
+		describe "oCustomer:FindById( cID4 )" ; enddescribe
 		describe "oCustomer:FeedProperties()"
-			oCustomer:FindById( aGUID[4] )
+			oCustomer:FindById( cID4 )
 			oCustomer:FeedProperties()
 			context "UpdateAt field must be diferent from CreatedAt" expect(oCustomer:CreatedAt) NOT_TO_BE(oCustomer:UpdatedAt)
 		enddescribe
@@ -301,7 +315,7 @@ FUNCTION oCustomer_Update(aGUID) FROM CONTEXT
 	oCustomer := oCustomer:Destroy()
 RETURN NIL
 
-FUNCTION oCustomer_Delete(aGUID) FROM CONTEXT
+FUNCTION oCustomer_Delete(aIDs) FROM CONTEXT
 	LOCAL oCustomer := NIL
 
 	oCustomer := Customer():New()
@@ -316,7 +330,7 @@ FUNCTION oCustomer_Delete(aGUID) FROM CONTEXT
 
 	describe "When valid data to delete"
 		describe "oCustomer:Delete( 1 )"
-			oCustomer:Delete( aGUID[1] )
+			oCustomer:Delete( aIDs[1] )
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_TRUTHY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente excluido com sucesso!")
@@ -351,9 +365,8 @@ FUNCTION oCustomer_CountAll() FROM CONTEXT
 	oCustomer := oCustomer:Destroy()
 RETURN NIL
 
-FUNCTION seed_costumer_fields( oCustomer, cGUID )
+FUNCTION seed_costumer_fields( oCustomer )
 	with object oCustomer
-		:ID := cGUID
 		:CustomerName := "PRIMEIRO CLIENTE"
 		:BirthDate := "22/01/1980"
 		:GenderId := 2

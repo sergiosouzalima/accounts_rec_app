@@ -24,15 +24,9 @@ CREATE CLASS Customer INHERIT CustomerDao
     DATA cZipCodeNumber             AS STRING   INIT ""
     DATA cCityName                  AS STRING   INIT ""
     DATA cCityStateInitials         AS STRING   INIT ""
-    //DATA cMessage                   AS STRING   INIT ""
-    //DATA lValid                     AS LOGICAL  INIT .F.
-    //DATA cCreatedAt                 AS STRING   INIT ""
-    //DATA cUpdatedAt                 AS STRING   INIT ""
-    //DATA nNumberOfRecords           AS INTEGER  INIT 0
 
     EXPORTED:
 		METHOD New( cConnection ) CONSTRUCTOR
-        //METHOD Id( cID ) SETGET
         METHOD CustomerName( cCustomerName ) SETGET
         METHOD GenderId( nGenderId ) SETGET
         METHOD Gender( oGender ) SETGET
@@ -46,17 +40,12 @@ CREATE CLASS Customer INHERIT CustomerDao
         METHOD ZipCodeNumber( cZipCodeNumber ) SETGET
         METHOD CityName( cCityName ) SETGET
         METHOD CityStateInitials( cCityStateInitials ) SETGET
-        //METHOD CreatedAt( cCreatedAt ) SETGET
-        //METHOD UpdatedAt( cUpdatedAt ) SETGET
-        //METHOD NumberOfRecords( nNumberOfRecords ) SETGET
         METHOD Destroy()
         METHOD Insert()
         METHOD Update( cID )
         METHOD Delete( cID )
         METHOD FeedProperties( ahRecordSet )
         METHOD ResetProperties()
-        //METHOD Message( cMessage ) SETGET
-        //METHOD Valid( lValid ) SETGET
 
     HIDDEN:
         DATA oCustomerDao   AS Object   INIT NIL
@@ -76,10 +65,6 @@ RETURN Self
 METHOD Destroy() CLASS Customer
     Self := NIL
 RETURN Self
-
-/*METHOD Id( cID ) CLASS Customer
-    ::cID := cID IF hb_IsString(cID)
-RETURN ::cID*/
 
 METHOD CustomerName( cCustomerName ) CLASS Customer
     ::cCustomerName := cCustomerName IF hb_IsString(cCustomerName)
@@ -132,26 +117,6 @@ RETURN ::cCityName
 METHOD CityStateInitials( cCityStateInitials ) CLASS Customer
     ::cCityStateInitials := cCityStateInitials IF hb_IsString(cCityStateInitials)
 RETURN ::cCityStateInitials
-
-/*METHOD CreatedAt( cCreatedAt ) CLASS Customer
-    ::cCreatedAt := cCreatedAt IF hb_IsString(cCreatedAt)
-RETURN ::cCreatedAt
-
-METHOD UpdatedAt( cUpdatedAt ) CLASS Customer
-    ::cUpdatedAt := cUpdatedAt IF hb_IsString(cUpdatedAt)
-RETURN ::cUpdatedAt*/
-
-/*METHOD NumberOfRecords( nNumberOfRecords ) CLASS Customer
-    ::nNumberOfRecords := nNumberOfRecords IF hb_IsNumeric(nNumberOfRecords)
-RETURN ::nNumberOfRecords*/
-
-/*METHOD Message( cMessage ) CLASS Customer
-    ::cMessage := cMessage IF hb_IsString(cMessage)
-RETURN ::cMessage
-
-METHOD Valid( lValid ) CLASS Customer
-    ::lValid := lValid IF hb_isLogical(lValid)
-RETURN ::lValid*/
 
 METHOD Insert() CLASS Customer
     LOCAL oError := NIL, hRecord := { => }
@@ -325,12 +290,12 @@ RETURN lOk .AND. oError == NIL
 
 METHOD FeedProperties() CLASS Customer
     LOCAL oError := NIL, lOk := .F.
-    LOCAL ahRecordSet := ::oCustomerDao:CustomerDao:RecordSet[01]
-    LOCAL oUtilities := Utilities():New()
+    LOCAL ahRecordSet := NIL, oUtilities := Utilities():New()
 
     RETURN .F. IF ::oCustomerDao:CustomerDao:NotFound()
 
     TRY
+        ahRecordSet := ::oCustomerDao:CustomerDao:RecordSet[01]
         ::Id                    := oUtilities:getStringValueFromHash (ahRecordSet, "ID")
         ::CustomerName          := oUtilities:getStringValueFromHash (ahRecordSet, "CUSTOMER_NAME")
         ::BirthDate             := oUtilities:getStringValueFromHash (ahRecordSet, "BIRTH_DATE")
