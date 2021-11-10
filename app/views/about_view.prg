@@ -10,7 +10,7 @@
 #include "custom_commands_v1.0.0.ch"
 
 //------------------------------------------------------------------
-CLASS AboutView FROM View
+CREATE CLASS AboutView FROM View
 
     EXPORTED:
         METHOD Run( oModel )
@@ -25,7 +25,7 @@ METHOD Run( oModel ) CLASS AboutView
     @10,06 SAY  "------ BANCO DE DADOS ------"
     @12,06 SAY  "NOME DO BANCO DE DADOS......: " + oModel:getDataBaseName()
     @13,06 SAY  "LOCALIZACAO.................: " + oModel:getDataBaseLocation()
-    @14,06 SAY  "QUANTIDADE DE CLIENTES......: " //+ ltrim(str(nQtdCliente))
+    @14,06 SAY  "QUANTIDADE DE CLIENTES......: " + strZero(oModel:getCustomerNumberOfRecords(), 04)
     @15,06 SAY  "QUANTIDADE DE FATURAS.......: " //+ ltrim(str(nQtdFatura))
     @16,06 SAY  "VERSAO DO SQLite3...........: " //+ sqlite3_libversion()
 

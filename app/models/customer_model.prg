@@ -9,7 +9,7 @@
 #include "hbclass.ch"
 #include "custom_commands_v1.0.0.ch"
 
-CREATE CLASS CustomerModel INHERIT CustomerDao
+CREATE CLASS CustomerModel FROM CustomerDao, Model
 
     EXPORTED:
 		METHOD New( cConnection ) CONSTRUCTOR
@@ -33,6 +33,7 @@ CREATE CLASS CustomerModel INHERIT CustomerDao
         METHOD FeedProperties( ahRecordSet )
         METHOD ResetProperties()
         METHOD InsertFakeCustomer()
+        METHOD BrowseDataPrepare()
 
     HIDDEN:
         DATA cCustomerName              AS STRING   INIT ""
@@ -59,7 +60,7 @@ CREATE CLASS CustomerModel INHERIT CustomerDao
 ENDCLASS
 
 METHOD New( cConnection ) CLASS CustomerModel
-    ::oCustomerDao := ::Super:New( hb_defaultValue(cConnection, "ar_app.s3db") )
+    ::oCustomerDao := ::CustomerDao:New( cConnection )
 RETURN Self
 
 METHOD Destroy() CLASS CustomerModel
@@ -339,6 +340,56 @@ METHOD InsertFakeCustomer() CLASS CustomerModel
         ::oCustomerDao:CustomerDao:Error := oError
     ENDTRY
 RETURN NIL
+
+METHOD BrowseDataPrepare() CLASS CustomerModel
+    LOCAL oBrowseData := NIL, nNumberOfRecords := 0
+    LOCAL aColValues := {}, ahColValues := { => }
+    LOCAL nCols := 0, i
+
+    ::CountAll()
+    ::FeedProperties()
+    nNumberOfRecords := ::NumberOfRecords
+
+    ::FindAll()
+    ::FeedProperties()
+
+    ahColValues := ::RecordSet
+    nCols := Len(ahColValues)
+
+    FOR i := 1 TO nCols
+        AADD( aColValues, { ;
+                    ahColValues[i]["ID"], ;
+                    ahColValues[i]["CUSTOMER_NAME"], ;
+                    ahColValues[i]["BIRTH_DATE"] ,   ;
+                    ahColValues[i]["GENDER_ID"], ;
+                    ahColValues[i]["ADDRESS_DESCRIPTION"], ;
+                    ahColValues[i]["COUNTRY_CODE_PHONE_NUMBER"], ;
+                    ahColValues[i]["AREA_PHONE_NUMBER"], ;
+                    ahColValues[i]["PHONE_NUMBER"], ;
+                    ahColValues[i]["CUSTOMER_EMAIL"], ;
+                    ahColValues[i]["DOCUMENT_NUMBER"], ;
+                    ahColValues[i]["ZIP_CODE_NUMBER"], ;
+                    ahColValues[i]["CITY_NAME"], ;
+                    ahColValues[i]["CITY_STATE_INITIALS"], ;
+                    ahColValues[i]["CREATED_AT"], ;
+                    ahColValues[i]["UPDATED_AT"] ;
+                } ;
+            )
+    NEXT
+
+    oBrowseData := BrowseData():New( ::getBoxDimensions() )
+    oBrowseData:Title := "Clientes"
+    oBrowseData:ColHeadings := {"Id", "Nome Cliente", "Data Nasc" , ;
+                                "Genero", "Endereco", "DDI", "DDD", "Telefone", ;
+                                "Email", "Documento", "CEP",;
+                                "Cidade", "Estado", "Registro em", "Alterado em"}
+    oBrowseData:ColValues := { aColValues, 1 }
+    oBrowseData:ColWidths := {  00, 40 , 10, ;
+                                10, 40, 02, 03, 10, ;
+                                40, 20, 09, ;
+                                20, 02, 23, 23  }
+    oBrowseData:NumOfRecords := nNumberOfRecords
+RETURN oBrowseData
 
 METHOD ONERROR( xParam ) CLASS CustomerModel
     LOCAL cCol := __GetMessage(), xResult

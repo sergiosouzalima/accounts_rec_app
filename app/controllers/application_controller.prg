@@ -9,14 +9,11 @@
 #include "hbclass.ch"
 #include "custom_commands_v1.0.0.ch"
 
-//------------------------------------------------------------------
-CLASS ApplicationController
-//FROM Controller
+CREATE CLASS ApplicationController
 
     EXPORTED:
         METHOD  New( oView, oModel ) CONSTRUCTOR
-        METHOD  getDispatchActions(oModel)
-        //METHOD  dispatchActions()
+        METHOD  dispatchActions()
         METHOD  getModel( oModel ) SETGET
         METHOD  getView( oView ) SETGET
 
@@ -25,7 +22,6 @@ CLASS ApplicationController
         DATA    oView      AS OBJECT
         METHOD  runCustomer()
         METHOD  runAbout()
-
 END CLASS
 
 METHOD New( oView, oModel ) CLASS ApplicationController
@@ -41,11 +37,11 @@ METHOD getView( oView ) CLASS ApplicationController
     ::oView := oView IF hb_isObject(oView)
 RETURN ::oView
 
-METHOD getDispatchActions( oModel ) CLASS ApplicationController
+METHOD dispatchActions() CLASS ApplicationController
     LOCAL nChosenItem := 0
 
     Repeat
-        ::getView:showMainMenu( oModel:hMainMenuBox, oModel:aMainMenuItems )
+        ::getView:showMainMenu( ::getModel:hMainMenuBox, ::getModel:aMainMenuItems )
         nChosenItem := ::getView:getOption()
 
         // switch....
@@ -63,15 +59,15 @@ METHOD getDispatchActions( oModel ) CLASS ApplicationController
 RETURN NIL
 
 METHOD runAbout() CLASS ApplicationController
-    LOCAL oModel := AboutModel():New()
+    LOCAL oModel := AboutModel():New( Model():New:getDBPathDBName() )
     LOCAL oView := AboutView():New()
     oView:Run(oModel)
 RETURN NIL
 
 METHOD runCustomer() CLASS ApplicationController
+    LOCAL oModel := CustomerModel():New( Model():New:getDBPathDBName() )
     LOCAL oView := CustomerView():New()
-    LOCAL oModel := CustomerModel():New()
     LOCAL oController := CustomerController():New( oView, oModel )
 
-    oController:getDispatchActions()
+    oController:dispatchActions()
 RETURN NIL

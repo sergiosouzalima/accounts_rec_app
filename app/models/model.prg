@@ -14,7 +14,7 @@
 #define MAX_ROW 40
 
 //------------------------------------------------------------------
-CREATE CLASS Model INHERIT CustomerModel
+CREATE CLASS Model
 
     EXPORTED:
         DATA nMaxCol        AS  INTEGER INIT    MAX_COL
@@ -34,15 +34,12 @@ CREATE CLASS Model INHERIT CustomerModel
         METHOD getCompanyName()
         METHOD getAppName()
         METHOD getDBPathDBName()
-
-    HIDDEN:
         METHOD InitialSetup()
 
 END CLASS
 
 //------------------------------------------------------------------
 METHOD New() CLASS Model
-    ::InitialSetup()
 RETURN Self
 
 METHOD getCompanyName() CLASS Model

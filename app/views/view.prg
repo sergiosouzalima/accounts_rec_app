@@ -11,7 +11,7 @@
 #include "box.ch"
 
 //------------------------------------------------------------------
-CLASS View
+CREATE CLASS View
     EXPORTED:
         METHOD  New() CONSTRUCTOR
         METHOD  showMainWindow( oModel )

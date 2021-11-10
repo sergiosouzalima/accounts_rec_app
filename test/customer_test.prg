@@ -16,18 +16,18 @@
 #include "hbclass.ch"
 #include "../../hbexpect/lib/hbexpect.ch"
 
+#define DB_NAME "test.s3db"
+
 FUNCTION Main()
 
 	begin hbexpect
-		LOCAL oCustomer, ahRecordSet := {}
-		LOCAL oUtilities := Utilities():New()
-		LOCAL aIDs := {}
+		LOCAL oCustomer, aIDs := {}
 
-		hb_vfErase("ar_app.s3db")
+		hb_vfErase(DB_NAME)
 
 		describe "Customer Class"
 
-			oCustomer := CustomerModel():New()
+			oCustomer := CustomerModel():New(DB_NAME)
 			describe "When instantiate"
 				describe "CustomerModel():New( [cDataBaseName] ) --> oCustomer"
 					context "and oCustomer's Class Name" expect(oCustomer) TO_BE_CLASS_NAME("CustomerModel")
@@ -75,7 +75,7 @@ RETURN NIL
 FUNCTION oCustomer_Insert() FROM CONTEXT
 	LOCAL oCustomer := NIL
 
-	oCustomer := CustomerModel():New()
+	oCustomer := CustomerModel():New(DB_NAME)
 	describe "When invalid data to insert"
 		describe "CustomerName"
 			seed_costumer_fields(oCustomer)
@@ -135,7 +135,7 @@ RETURN NIL
 FUNCTION oCustomer_FindBy() FROM CONTEXT
 	LOCAL oCustomer := NIL, cGUID := ""
 
-	oCustomer := CustomerModel():New()
+	oCustomer := CustomerModel():New(DB_NAME)
 	describe "oCustomer:FindFirst()"
 		describe "oCustomer:FeedProperties()"
 			oCustomer:FindFirst()
@@ -146,7 +146,7 @@ FUNCTION oCustomer_FindBy() FROM CONTEXT
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
-	oCustomer := CustomerModel():New()
+	oCustomer := CustomerModel():New(DB_NAME)
 	describe "oCustomer:FindById( cGUID )"
 		describe "oCustomer:FeedProperties()"
 			oCustomer:FindById( cGUID )
@@ -156,7 +156,7 @@ FUNCTION oCustomer_FindBy() FROM CONTEXT
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
-	oCustomer := CustomerModel():New()
+	oCustomer := CustomerModel():New(DB_NAME)
 	describe "oCustomer:FindByCustomerName( cCustomerName )"
 		describe "oCustomer:FeedProperties()"
 			oCustomer:FindByCustomerName( "PRIMEIRO CLIENTE" )
@@ -166,7 +166,7 @@ FUNCTION oCustomer_FindBy() FROM CONTEXT
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
-	oCustomer := CustomerModel():New()
+	oCustomer := CustomerModel():New(DB_NAME)
 	describe "oCustomer:FindById( cID )"
 		oCustomer:FindById( 999 )
 		describe "When Id doesn't exist"
@@ -175,7 +175,7 @@ FUNCTION oCustomer_FindBy() FROM CONTEXT
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
-	oCustomer := CustomerModel():New()
+	oCustomer := CustomerModel():New(DB_NAME)
 	describe "oCustomer:FindByCustomerName( cCustomerName )"
 		oCustomer:FindByCustomerName( "CLIENTE NAO CADASTRADO" )
 		describe "When Customer Name doesn't exist"
@@ -189,7 +189,7 @@ RETURN NIL
 FUNCTION oCustomer_FindAll() FROM CONTEXT
 	LOCAL oCustomer := NIL, aIDs := {}
 
-	oCustomer := CustomerModel():New()
+	oCustomer := CustomerModel():New(DB_NAME)
 	seed_costumer_fields(oCustomer)
 	with object oCustomer
 		:CustomerName := "SEGUNDO CLIENTE"
@@ -215,7 +215,7 @@ RETURN aIDs
 FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 	LOCAL oCustomer := NIL, cID4 := ""
 
-	oCustomer := CustomerModel():New()
+	oCustomer := CustomerModel():New(DB_NAME)
 	describe "When invalid data to update"
 		seed_costumer_fields(oCustomer)
 		describe "CustomerName"
@@ -313,7 +313,7 @@ RETURN NIL
 FUNCTION oCustomer_Delete(aIDs) FROM CONTEXT
 	LOCAL oCustomer := NIL
 
-	oCustomer := CustomerModel():New()
+	oCustomer := CustomerModel():New(DB_NAME)
 	describe "When invalid data to delete"
 		describe "oCustomer:Delete( 9999 )"
 			oCustomer:Delete( "9999" )
@@ -338,7 +338,7 @@ RETURN NIL
 FUNCTION oCustomer_CountAll() FROM CONTEXT
 	LOCAL oCustomer := NIL
 
-	oCustomer := CustomerModel():New()
+	oCustomer := CustomerModel():New(DB_NAME)
 	describe "When counting all records"
 		describe "oCustomer:CountAll()"
 			oCustomer:CountAll()

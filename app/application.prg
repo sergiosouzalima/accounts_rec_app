@@ -12,17 +12,19 @@
 //------------------------------------------------------------------
 // Main Class
 CLASS Application
-    DATA Controller AS OBJECT
 
-    METHOD New() CONSTRUCTOR
-    METHOD Run()
+    EXPORTED:
+        DATA Controller AS OBJECT
+
+        METHOD New() CONSTRUCTOR
+        METHOD Run()
 END CLASS
 
 //------------------------------------------------------------------
 // Constructor
 METHOD New() CLASS Application
-    LOCAL oView := ApplicationView():New()
     LOCAL oModel := ApplicationModel():New()
+    LOCAL oView := ApplicationView():New()
 
     ::Controller := ApplicationController():New( oView, oModel )
 RETURN Self
@@ -31,7 +33,9 @@ RETURN Self
 // Starting point
 METHOD Run() CLASS Application
 
+    Model():New:InitialSetup()
+
     ::Controller:getView:showMainWindow( ::Controller:getModel )
-    ::Controller:getDispatchActions( ::Controller:getModel )
+    ::Controller:dispatchActions()
     ::Controller:getView:showEnd()
 RETURN NIL

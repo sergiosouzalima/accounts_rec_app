@@ -10,13 +10,25 @@
 #include "custom_commands_v1.0.0.ch"
 
 //------------------------------------------------------------------
-CLASS AboutModel FROM Model
+CREATE CLASS AboutModel FROM Model
 
     EXPORTED:
         METHOD getDataBaseLocation()
+        METHOD getCustomerNumberOfRecords()
 
 END CLASS
 
 METHOD getDataBaseLocation() CLASS AboutModel
     LOCAL cDBPathDBName := ::getDBPathDBName()
 RETURN iif(File(cDBPathDBName), cDBPathDBName , "not found")
+
+METHOD getCustomerNumberOfRecords()
+    LOCAL oCustomer := CustomerModel():New( ::getDBPathDBName() )
+    LOCAL nNumberOfRecords := 0
+
+    oCustomer:CountAll()
+    oCustomer:FeedProperties()
+    nNumberOfRecords := oCustomer:NumberOfRecords
+    oCustomer := oCustomer:Destroy()
+
+RETURN nNumberOfRecords

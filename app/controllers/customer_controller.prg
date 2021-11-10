@@ -19,14 +19,13 @@
 #define K_i 105 //  Insert
 
 //------------------------------------------------------------------
-CLASS CustomerController FROM ApplicationController
+CREATE CLASS CustomerController
 
     EXPORTED:
         METHOD New( oView, oModel ) CONSTRUCTOR
         METHOD getModel( oModel ) SETGET
         METHOD getView( oView ) SETGET
-        METHOD dispatchActions() VIRTUAL
-        METHOD getDispatchActions( oModel )
+        METHOD dispatchActions()
 
     HIDDEN:
         DATA oModel     AS OBJECT
@@ -49,15 +48,16 @@ METHOD getView( oView ) CLASS CustomerController
     ::oView := oView IF hb_isObject(oView)
 RETURN ::oView
 
-METHOD getDispatchActions() CLASS CustomerController
-    LOCAL nChosenItem := 0, oCustomer := NIL
+METHOD dispatchActions() CLASS CustomerController
+    LOCAL nChosenItem := 0
+    LOCAL hBox := ::getModel:getBoxDimensions()
 
-    oCustomer := CustomerModel():New( ::getModel:getDBPathDBName() )
-    oCustomer:CreateTable()
-    oCustomer:InsertFakeCustomer() IF oCustomer:TableEmpty()
+    ::getModel:CreateTable()
+    ::getModel:InsertFakeCustomer() IF ::getModel:TableEmpty()
 
     Repeat
-        ::getView:showCustomerBrowserData( ::getModel )
+
+        ::getView:showCustomerBrowseData( hBox, ::getModel:BrowseDataPrepare() )
         nChosenItem := ::getView:getOption()
 
         // switch....
@@ -71,6 +71,6 @@ METHOD getDispatchActions() CLASS CustomerController
             /*otherwise
                 ::vista:operacionIncorrecta()*/
         end switch
+        //oBrowseData := oBrowseData:Destroy()
     Until nChosenItem == K_ESC
-    oCustomer := oCustomer:Destroy()
 RETURN NIL

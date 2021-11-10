@@ -82,8 +82,7 @@ CLASS BrowseData
 ENDCLASS
 
 METHOD New( hBox ) CLASS BrowseData
-    LOCAL i, bBlock, oTBrowse, oTBColumn
-    LOCAL nHeadings := Len( ::ColHeadings )
+    LOCAL oTBrowse
 
     HB_CDPSELECT( 'PTISO' )
     HB_LANGSELECT( 'PT' )
@@ -94,6 +93,18 @@ METHOD New( hBox ) CLASS BrowseData
     ENDIF
 
     oTBrowse := TBrowse():New( ::BrowserTopRow, ::BrowserTopCol, ::BrowserBottomRow, ::BrowserBottomCol )
+
+    ::oTBrowse := oTBrowse
+RETURN Self
+
+METHOD Run() CLASS BrowseData
+    LOCAL oTBrowse := ::oTBrowse
+    LOCAL nHeadings := Len( ::ColHeadings )
+    LOCAL nKey := 0, nSelectedRecord := 0
+    LOCAL i, bBlock, oTBColumn
+
+    DispOutAt( ::MsgTopRow, ::MsgTopCol, ::Title, "N/W" )
+    DispOutAt( ::MsgBottomRow, ::MsgBottomCol, "Records: " + ltrim(str(::NumOfRecords)) + " | " +::cFooterMsg, "N/W" )
 
     oTBrowse:cargo      := ::ColValues
     oTBrowse:border     := B_DOUBLE
@@ -115,16 +126,6 @@ METHOD New( hBox ) CLASS BrowseData
        oTBColumn:width := ::ColWidths[i]
        oTBrowse:addColumn( oTBColumn )
     NEXT
-
-    ::oTBrowse := oTBrowse
-RETURN Self
-
-METHOD Run() CLASS BrowseData
-    LOCAL oTBrowse := ::oTBrowse
-    LOCAL nKey := 0, nSelectedRecord := 0
-
-    DispOutAt( ::MsgTopRow, ::MsgTopCol, ::Title, "N/W" )
-    DispOutAt( ::MsgBottomRow, ::MsgBottomCol, "Records: " + ltrim(str(::NumOfRecords)) + " | " +::cFooterMsg, "N/W" )
 
     // display browser and process user input
     Repeat

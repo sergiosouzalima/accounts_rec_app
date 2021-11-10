@@ -10,10 +10,10 @@
 #include "custom_commands_v1.0.0.ch"
 
 //------------------------------------------------------------------
-CLASS CustomerView FROM View
+CREATE CLASS CustomerView INHERIT View
 
     EXPORTED:
-        METHOD showCustomerBrowserData( oModel )
+        METHOD showCustomerBrowseData( hBox, oBrowseData )
         METHOD getOption( nOption ) SETGET
         METHOD getSelectedRecord( nSelectedRecord ) SETGET
 
@@ -23,19 +23,14 @@ CLASS CustomerView FROM View
 
 END CLASS
 
-METHOD showCustomerBrowserData( oModel ) CLASS CustomerView
-    LOCAL hBox := oModel:getBoxDimensions()
-    LOCAL oBrowseData := NIL
-
+METHOD showCustomerBrowseData( hBox, oBrowseData ) CLASS CustomerView
     ::clearBox(hBox)
 
-    oBrowseData := BrowseData():New( hBox )
     WITH OBJECT oBrowseData
         :Run()
         ::getOption := :nKeyPressed
         ::getSelectedRecord := :nSelectedRecord
     ENDWITH
-    oBrowseData := oBrowseData:Destroy()
 
     ::clearBox(hBox)
 RETURN NIL

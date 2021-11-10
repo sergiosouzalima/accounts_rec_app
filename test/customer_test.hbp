@@ -23,6 +23,7 @@ hbsqlit3.hbc
 ../app/models/customer_model.prg
 ../app/models/customerdao_class.prg
 ../app/models/model.prg
+../lib/browse_data.prg
 customer_test.prg
 
 # Special parameters for LINUX/GTK
