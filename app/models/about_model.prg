@@ -24,11 +24,4 @@ RETURN iif(File(cDBPathDBName), cDBPathDBName , "not found")
 
 METHOD getCustomerNumberOfRecords()
     LOCAL oCustomer := CustomerModel():New( ::getDBPathDBName() )
-    LOCAL nNumberOfRecords := 0
-
-    oCustomer:CountAll()
-    oCustomer:FeedProperties()
-    nNumberOfRecords := oCustomer:NumberOfRecords
-    oCustomer := oCustomer:Destroy()
-
-RETURN nNumberOfRecords
+RETURN oCustomer:CountAll()

@@ -340,7 +340,9 @@ FUNCTION oCustomer_CountAll() FROM CONTEXT
 
 	oCustomer := CustomerModel():New(DB_NAME)
 	describe "When counting all records"
-		describe "oCustomer:CountAll()"
+		describe "oCustomer := CustomerModel():New(DB_NAME)"
+		enddescribe
+		describe "oCustomer:CountAll() --> nNumberOfRecords"
 			oCustomer:CountAll()
 			context "oCustomer RecordSetLength property" expect(oCustomer:RecordSetLength) TO_BE(1)
 			context "oCustomer Found method" expect(oCustomer:Found) TO_BE_TRUTHY
@@ -350,9 +352,10 @@ FUNCTION oCustomer_CountAll() FROM CONTEXT
 		describe "oCustomer:CountAll()"
 			describe "oCustomer:FeedProperties()"
 				oCustomer:CountAll()
-				oCustomer:FeedProperties()
+				//oCustomer:FeedProperties()
 				context "Number Of Records" expect (oCustomer:NumberOfRecords) TO_BE( 3 )
 				context "Table empty?" expect (oCustomer:TableEmpty()) TO_BE_FALSY
+				context "Number Of Records: oCustomer:CountAll()" expect (oCustomer:CountAll()) TO_BE( 3 )
 			enddescribe
 		enddescribe
 	enddescribe

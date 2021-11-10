@@ -31,6 +31,10 @@ REQUEST HB_LANG_PT
 #define K_I 73  //  Insert
 #define K_i 105 //  Insert
 
+#define DEFAULT_COL_HEADINGS {"Id", "Message"}
+#define DEFAULT_COL_VALUES {{{1, "No data found"}}, 1}
+#define DEFAULT_COL_WIDTHS {10, 30}
+
 //------------------------------------------------------------------
 CLASS BrowseData
 
@@ -40,9 +44,9 @@ CLASS BrowseData
         DATA nRow2                      AS  INTEGER INIT    28
         DATA nCol2                      AS  INTEGER INIT    128
         DATA cTitle                     AS  STRING  INIT    "Browse Data"
-        DATA aColHeadings               AS  ARRAY   INIT    {"Id", "Message"}
-        DATA aColValues                 AS  ARRAY   INIT    {{{1, "No data found"}}, 1}
-        DATA aColWidths                 AS  ARRAY   INIT    {10, 30}
+        DATA aColHeadings               AS  ARRAY   INIT    DEFAULT_COL_HEADINGS
+        DATA aColValues                 AS  ARRAY   INIT    DEFAULT_COL_VALUES
+        DATA aColWidths                 AS  ARRAY   INIT    DEFAULT_COL_WIDTHS
         DATA nNumOfRecords              AS  INTEGER INIT    1
         DATA cFooterMsg                 AS  STRING  INIT    "<ESC>=Exit | I=Insert | M=Modify | D=Delete"
         DATA aAvailableKeys             AS  ARRAY   INIT    {K_ESC, K_M, K_m, K_D, K_d, K_I, K_i}
@@ -99,9 +103,15 @@ RETURN Self
 
 METHOD Run() CLASS BrowseData
     LOCAL oTBrowse := ::oTBrowse
-    LOCAL nHeadings := Len( ::ColHeadings )
     LOCAL nKey := 0, nSelectedRecord := 0
     LOCAL i, bBlock, oTBColumn
+    LOCAL aValues := ::ColValues[1], lhasDataAvailable := Len(aValues) > 0
+
+    IF !lhasDataAvailable
+        ::ColValues := DEFAULT_COL_VALUES
+        ::ColHeadings := DEFAULT_COL_HEADINGS
+        ::ColWidths := DEFAULT_COL_WIDTHS
+    ENDIF
 
     DispOutAt( ::MsgTopRow, ::MsgTopCol, ::Title, "N/W" )
     DispOutAt( ::MsgBottomRow, ::MsgBottomCol, "Records: " + ltrim(str(::NumOfRecords)) + " | " +::cFooterMsg, "N/W" )
@@ -119,7 +129,7 @@ METHOD Run() CLASS BrowseData
     oTBrowse:skipBlock     := {|nSkip| ::ArraySkipper( nSkip, oTBrowse ) }
 
     // create TBColumn objects and add them to TBrowse object
-    FOR i:=1 TO nHeadings
+    FOR i:=1 TO Len(::ColHeadings)
        // code block for individual columns of the array
        bBlock    := ::ArrayBlock( oTBrowse, i )
        oTBColumn := TBColumn():new( ::ColHeadings[i], bBlock )

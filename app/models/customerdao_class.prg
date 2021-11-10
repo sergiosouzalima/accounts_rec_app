@@ -259,14 +259,17 @@ RETURN NIL
 
 METHOD CountAll() CLASS CustomerDao
     LOCAL oError := NIL, hRecord := { => }
+    LOCAL ahRecordSet := NIL, oUtilities := Utilities():New(), nNumberOfRecords := 0
 
     TRY
         ::InitStatusIndicators()
         ::FindBy( hRecord, SQL_COUNT_ALL )
+        ahRecordSet := ::RecordSet[01]
+        nNumberOfRecords := oUtilities:getNumericValueFromHash(ahRecordSet, "NUMBER_OF_RECORDS")
     CATCH oError
         ::Error := oError
     ENDTRY
-RETURN NIL
+RETURN nNumberOfRecords
 
 METHOD TableEmpty() CLASS CustomerDao
     LOCAL oError := NIL

@@ -346,9 +346,9 @@ METHOD BrowseDataPrepare() CLASS CustomerModel
     LOCAL aColValues := {}, ahColValues := { => }
     LOCAL nCols := 0, i
 
-    ::CountAll()
-    ::FeedProperties()
-    nNumberOfRecords := ::NumberOfRecords
+    nNumberOfRecords := ::CountAll()
+    //::FeedProperties()
+    //nNumberOfRecords := ::NumberOfRecords
 
     ::FindAll()
     ::FeedProperties()
