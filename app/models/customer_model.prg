@@ -14,7 +14,7 @@ CREATE CLASS CustomerModel FROM CustomerDao, Model
     EXPORTED:
 		METHOD New( cConnection ) CONSTRUCTOR
         METHOD CustomerName( cCustomerName ) SETGET
-        METHOD GenderId( nGenderId ) SETGET
+        METHOD GenderId( cGenderId ) SETGET
         METHOD Gender( oGender ) SETGET
         METHOD AddressDescription( cAddressDescription ) SETGET
         METHOD CountryCodePhoneNumber( cCountryCodePhoneNumber ) SETGET
@@ -37,7 +37,7 @@ CREATE CLASS CustomerModel FROM CustomerDao, Model
 
     HIDDEN:
         DATA cCustomerName              AS STRING   INIT ""
-        DATA nGenderId                  AS INTEGER  INIT 0
+        DATA cGenderId                  AS STRING   INIT ""
         DATA oGender                    AS Object   INIT NIL
         DATA cAddressDescription        AS STRING   INIT ""
         DATA cCountryCodePhoneNumber    AS STRING   INIT ""
@@ -71,9 +71,9 @@ METHOD CustomerName( cCustomerName ) CLASS CustomerModel
     ::cCustomerName := cCustomerName IF hb_IsString(cCustomerName)
 RETURN ::cCustomerName
 
-METHOD GenderId( nGenderId ) CLASS CustomerModel
-    ::nGenderId := nGenderId IF hb_IsNumeric(nGenderId)
-RETURN ::nGenderId
+METHOD GenderId( cGenderId ) CLASS CustomerModel
+    ::cGenderId := cGenderId IF hb_IsString(cGenderId)
+RETURN ::cGenderId
 
 METHOD Gender( oGender ) CLASS CustomerModel
     ::oGender := oGender IF hb_IsObject(oGender) .OR. oGender == NIL
@@ -250,7 +250,7 @@ METHOD SetPropsToRecordHash(hRecord) CLASS CustomerModel
         "#ID"                           =>  ::Id, ;
         "#CUSTOMER_NAME"                =>  ::CustomerName, ;
         "#BIRTH_DATE"                   =>  ::BirthDate, ;
-        "#GENDER_ID"                    =>  Alltrim(Str(::GenderId)), ;
+        "#GENDER_ID"                    =>  ::GenderId, ;
         "#ADDRESS_DESCRIPTION"          =>  ::AddressDescription, ;
         "#COUNTRY_CODE_PHONE_NUMBER"    =>  ::CountryCodePhoneNumber, ;
         "#AREA_PHONE_NUMBER"            =>  ::AreaPhoneNumber, ;
@@ -270,7 +270,7 @@ METHOD ResetProperties() CLASS CustomerModel
         ::Id                    := ""
         ::CustomerName          := ""
         ::BirthDate             := ""
-        ::GenderId              := 0
+        ::GenderId              := ""
         ::AddressDescription    := ""
         ::CountryCodePhoneNumber:= ""
         ::AreaPhoneNumber       := ""
@@ -298,7 +298,7 @@ METHOD FeedProperties() CLASS CustomerModel
         ::Id                    := oUtilities:getStringValueFromHash (ahRecordSet, "ID")
         ::CustomerName          := oUtilities:getStringValueFromHash (ahRecordSet, "CUSTOMER_NAME")
         ::BirthDate             := oUtilities:getStringValueFromHash (ahRecordSet, "BIRTH_DATE")
-        ::GenderId              := oUtilities:getNumericValueFromHash(ahRecordSet, "GENDER_ID")
+        ::GenderId              := oUtilities:getStringValueFromHash (ahRecordSet, "GENDER_ID")
         ::AddressDescription    := oUtilities:getStringValueFromHash (ahRecordSet, "ADDRESS_DESCRIPTION")
         ::CountryCodePhoneNumber:= oUtilities:getStringValueFromHash (ahRecordSet, "COUNTRY_CODE_PHONE_NUMBER")
         ::AreaPhoneNumber       := oUtilities:getStringValueFromHash (ahRecordSet, "AREA_PHONE_NUMBER")
@@ -321,7 +321,7 @@ METHOD InsertInitialCustomer() CLASS CustomerModel
         WITH OBJECT Self
             :CustomerName := "JOAO DA SILVA."
             :BirthDate := "22/01/1980"
-            :GenderId := 2
+            :GenderId := GenderModel():New:FindFirst():Id
             :AddressDescription := "5th AV, 505"
             :CountryCodePhoneNumber := "55"
             :AreaPhoneNumber := "11"
