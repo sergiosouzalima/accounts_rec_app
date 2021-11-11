@@ -1,13 +1,13 @@
 #
-# $Id: customer_test.hbp
+# $Id: gender_test.hbp
 #
 # How to compile:
-# hbmk2 customer_test.hbp
+# hbmk2 gender_test.hbp
 #
 
 -w2
 -gc3
--ocustomer_test
+-ogender_test
 {linux}-ldl
 -lpthread
 -i../lib
@@ -20,11 +20,11 @@ hbsqlit3.hbc
 ../../persistencedao_harbour/persistencedao_class.prg
 ../../utilities_harbour/utilities_class.prg
 
-../app/models/customer_model.prg
-../app/models/customerdao_model.prg
+../app/models/gender_model.prg
+../app/models/genderdao_model.prg
 ../app/models/model.prg
 ../lib/browse_data.prg
-customer_test.prg
+gender_test.prg
 
 # Special parameters for LINUX/GTK
 {linux}-lm

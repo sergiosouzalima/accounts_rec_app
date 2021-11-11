@@ -1,11 +1,10 @@
 /*
     System.......: DAO
-    Program......: customerdao_class.prg
+    Program......: customerdao_model.prg
     Description..: Belongs to Model DAO to allow access to a datasource named Customer.
     Author.......: Sergio Lima
-    Updated at...: Oct, 2021
+    Updated at...: Nov, 2021
 */
-
 
 #include "hbclass.ch"
 #include "custom_commands_v1.0.0.ch"
@@ -166,7 +165,6 @@ CREATE CLASS CustomerDao INHERIT PersistenceDao
     EXPORTED:
         METHOD  New( cConnection ) CONSTRUCTOR
         METHOD  Destroy()
-        METHOD  Destroy()
         METHOD  CreateTable()
         METHOD  Insert( hRecord )
         METHOD  Update( cID, hRecord )
@@ -275,7 +273,6 @@ METHOD TableEmpty() CLASS CustomerDao
     LOCAL oError := NIL, nNumberOfRecords := 0
     TRY
         nNumberOfRecords := ::CountAll()
-        //::FeedProperties()
     CATCH oError
         ::Error := oError
     ENDTRY

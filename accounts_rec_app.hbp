@@ -24,11 +24,15 @@ accounts_rec_app.prg
 app/application.prg
 app/controllers/application_controller.prg
 app/controllers/customer_controller.prg
+
 app/models/model.prg
 app/models/application_model.prg
 app/models/about_model.prg
-app/models/customerdao_class.prg
+app/models/customerdao_model.prg
 app/models/customer_model.prg
+app/models/genderdao_model.prg
+app/models/gender_model.prg
+
 app/views/view.prg
 app/views/application_view.prg
 app/views/about_view.prg

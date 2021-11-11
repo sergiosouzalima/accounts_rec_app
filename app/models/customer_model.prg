@@ -282,7 +282,6 @@ METHOD ResetProperties() CLASS CustomerModel
         ::CityStateInitials     := ""
         ::CreatedAt             := ""
         ::UpdatedAt             := ""
-        //::NumberOfRecords       := 0
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
     ENDTRY
@@ -311,7 +310,6 @@ METHOD FeedProperties() CLASS CustomerModel
         ::CityStateInitials     := oUtilities:getStringValueFromHash (ahRecordSet, "CITY_STATE_INITIALS")
         ::CreatedAt             := oUtilities:getStringValueFromHash (ahRecordSet, "CREATED_AT")
         ::UpdatedAt             := oUtilities:getStringValueFromHash (ahRecordSet, "UPDATED_AT")
-        //::NumberOfRecords       := oUtilities:getNumericValueFromHash(ahRecordSet, "NUMBER_OF_RECORDS")
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
     ENDTRY
@@ -347,8 +345,6 @@ METHOD BrowseDataPrepare() CLASS CustomerModel
     LOCAL nCols := 0, i
 
     nNumberOfRecords := ::CountAll()
-    //::FeedProperties()
-    //nNumberOfRecords := ::NumberOfRecords
 
     ::FindAll()
     ::FeedProperties()
