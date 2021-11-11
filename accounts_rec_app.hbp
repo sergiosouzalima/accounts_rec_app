@@ -1,13 +1,13 @@
 #
-# $Id: harbour_mvc_sample.hbp
+# $Id: accounts_rec_app.hbp
 #
 # How to compile:
-# hbmk2 harbour_mvc_sample.hbp
+# hbmk2 accounts_rec_app.hbp
 #
 
 -w2
 -gc3
--oharbour_mvc_sample
+-oaccounts_rec_app
 {linux}-ldl
 -lpthread
 -ilib
@@ -20,7 +20,7 @@ hbsqlit3.hbc
 ../persistencedao_harbour/persistencedao_class.prg
 ../utilities_harbour/utilities_class.prg
 
-harbour_mvc_sample.prg
+accounts_rec_app.prg
 app/application.prg
 app/controllers/application_controller.prg
 app/controllers/customer_controller.prg

@@ -2,7 +2,7 @@
 #   'git ls-files -i --exclude-standard'
 
 
-harbour_mvc_sample
+accounts_rec_app
 *.s3db
 *.exe
 *.dll

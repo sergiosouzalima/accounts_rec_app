@@ -1,6 +1,6 @@
 /*
     System.......: Harbour MVC sample Application
-    Program......: harbour_mvc_sample.prg
+    Program......: accounts_rec_app.prg
     Description..: Harbour MVC sample Application
     Author.......: Sergio Lima
     Updated at...: Oct, 2021
