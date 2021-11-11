@@ -53,7 +53,7 @@ METHOD dispatchActions() CLASS CustomerController
     LOCAL hBox := ::getModel:getBoxDimensions()
 
     ::getModel:CreateTable()
-    ::getModel:InsertFakeCustomer() IF ::getModel:TableEmpty()
+    ::getModel:InsertInitialCustomer() IF ::getModel:TableEmpty()
 
     Repeat
 

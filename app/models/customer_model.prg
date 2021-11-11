@@ -32,7 +32,7 @@ CREATE CLASS CustomerModel FROM CustomerDao, Model
         METHOD Delete( cID )
         METHOD FeedProperties( ahRecordSet )
         METHOD ResetProperties()
-        METHOD InsertFakeCustomer()
+        METHOD InsertInitialCustomer()
         METHOD BrowseDataPrepare()
 
     HIDDEN:
@@ -315,7 +315,7 @@ METHOD FeedProperties() CLASS CustomerModel
     ENDTRY
 RETURN NIL
 
-METHOD InsertFakeCustomer() CLASS CustomerModel
+METHOD InsertInitialCustomer() CLASS CustomerModel
     LOCAL oError := NIL
     TRY
         WITH OBJECT Self

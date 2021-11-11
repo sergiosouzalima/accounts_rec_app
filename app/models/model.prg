@@ -36,6 +36,10 @@ CREATE CLASS Model
         METHOD getDBPathDBName()
         METHOD InitialSetup()
 
+    HIDDEN:
+        METHOD EnvSetup()
+        METHOD CreateGender()
+
 END CLASS
 
 //------------------------------------------------------------------
@@ -96,6 +100,11 @@ METHOD getOS() CLASS Model
 RETURN OS()
 
 METHOD InitialSetup() CLASS Model
+    ::EnvSetup()
+    ::CreateGender()
+RETURN NIL
+
+METHOD EnvSetup() CLASS Model
     set( _SET_DATEFORMAT, "DD/MM/YYYY" )
     SET CENTURY ON
     SET MESSAGE TO 04 CENTER
@@ -105,4 +114,10 @@ METHOD InitialSetup() CLASS Model
     SET CONFIRM ON
     SET SCOREBOARD OFF
     SETMODE(::nMaxRow, ::nMaxCol)
+RETURN NIL
+
+METHOD CreateGender() CLASS Model
+    LOCAL oGender := GenderModel():New( ::getDBPathDBName() )
+    oGender:CreateTable()
+    oGender:InsertInitialGender() IF oGender:TableEmpty()
 RETURN NIL

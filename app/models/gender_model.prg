@@ -20,7 +20,7 @@ CREATE CLASS GenderModel INHERIT GenderDao, Model
         METHOD Delete( cID )
         METHOD FeedProperties( ahRecordSet )
         METHOD ResetProperties()
-        METHOD InsertFakeGender()
+        METHOD InsertInitialGender()
         METHOD BrowseDataPrepare()
 
     HIDDEN:
@@ -208,13 +208,14 @@ METHOD FeedProperties() CLASS GenderModel
     ENDTRY
 RETURN NIL
 
-METHOD InsertFakeGender() CLASS GenderModel
-    LOCAL oError := NIL
+METHOD InsertInitialGender() CLASS GenderModel
+    LOCAL oError := NIL, e := NIL
+    LOCAL aDescriptions := {"MASCULINO", "FEMININO", "INDEFINIDO", "NAO INFORMADO"}
     TRY
-        WITH OBJECT Self
-            :GenderDescription := "MASCULINO"
-        ENDWITH
-        ::Insert()
+        FOR EACH e IN aDescriptions
+            Self:GenderDescription := e
+            ::Insert()
+        NEXT
         ::ResetProperties()
     CATCH oError
         ::oGenderDao:GenderDao:Error := oError
