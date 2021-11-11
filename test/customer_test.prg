@@ -353,7 +353,7 @@ FUNCTION oCustomer_CountAll() FROM CONTEXT
 			describe "oCustomer:FeedProperties()"
 				oCustomer:CountAll()
 				//oCustomer:FeedProperties()
-				context "Number Of Records" expect (oCustomer:NumberOfRecords) TO_BE( 3 )
+				//context "Number Of Records" expect (oCustomer:NumberOfRecords) TO_BE( 3 )
 				context "Table empty?" expect (oCustomer:TableEmpty()) TO_BE_FALSY
 				context "Number Of Records: oCustomer:CountAll()" expect (oCustomer:CountAll()) TO_BE( 3 )
 			enddescribe

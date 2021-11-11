@@ -272,14 +272,14 @@ METHOD CountAll() CLASS CustomerDao
 RETURN nNumberOfRecords
 
 METHOD TableEmpty() CLASS CustomerDao
-    LOCAL oError := NIL
+    LOCAL oError := NIL, nNumberOfRecords := 0
     TRY
-        ::CountAll()
-        ::FeedProperties()
+        nNumberOfRecords := ::CountAll()
+        //::FeedProperties()
     CATCH oError
         ::Error := oError
     ENDTRY
-RETURN ::NumberOfRecords == 0
+RETURN nNumberOfRecords == 0
 
 METHOD FindByCustomerName( cCustomerName ) CLASS CustomerDao
     LOCAL oError := NIL,  hRecord := { => }
