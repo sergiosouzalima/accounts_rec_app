@@ -99,7 +99,7 @@ FUNCTION Find_All_When_Empty() FROM CONTEXT
 RETURN NIL
 
 FUNCTION oCustomer_Insert() FROM CONTEXT
-	LOCAL oCustomer := NIL
+	LOCAL oCustomer := NIL, cUID := ""
 
 	oCustomer := CustomerModel():New(DB_NAME)
 	describe "When invalid data to insert"
@@ -138,9 +138,10 @@ FUNCTION oCustomer_Insert() FROM CONTEXT
 
 	describe "When valid data to insert"
 		seed_costumer_fields(oCustomer)
-		oCustomer:Insert()
+		cUID := oCustomer:Insert()
 		context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_TRUTHY
+		context "When getting new GUID LENGTH" expect (Len(cUID)) TO_BE(36)
 		context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente cadastrado com sucesso!")
 	enddescribe
 
@@ -159,42 +160,43 @@ RETURN NIL
 
 
 FUNCTION oCustomer_FindBy() FROM CONTEXT
-	LOCAL oCustomer := NIL, cGUID := ""
+	LOCAL oCustomer := NIL
 
 	oCustomer := CustomerModel():New(DB_NAME)
 	describe "oCustomer:FindFirst()"
-		describe "oCustomer:FeedProperties()"
-			oCustomer:FindFirst()
-			oCustomer:FeedProperties()
-			cGUID := oCustomer:Id
-			check_properties( oCustomer ) WITH CONTEXT
-		enddescribe
+		oCustomer:FindFirst()
+		context "and checking if it was found" expect (oCustomer:Found()) TO_BE_TRUTHY
+		context "Id" expect (oCustomer:Id) NOT_TO_BE_NIL
+		context "CustomerName" expect (oCustomer:CustomerName) TO_BE( "PRIMEIRO CLIENTE" )
+		context "BirthDate" expect (oCustomer:BirthDate) TO_BE( "22/01/1980" )
+		context "GenderId" expect (oCustomer:GenderId) NOT_TO_BE_NIL
+		context "AddressDescription" expect (oCustomer:AddressDescription) TO_BE( "5th AV, 505" )
+		context "CountryCodePhoneNumber" expect (oCustomer:CountryCodePhoneNumber) TO_BE( "55" )
+		context "AreaPhoneNumber" expect (oCustomer:AreaPhoneNumber) TO_BE( "11" )
+		context "PhoneNumber" expect (oCustomer:PhoneNumber) TO_BE( "555-55555" )
+		context "CustomerEmail" expect (oCustomer:CustomerEmail) TO_BE( "nome-cliente@mail.com" )
+		context "DocumentNumber" expect (oCustomer:DocumentNumber) TO_BE( "99876999-99" )
+		context "ZipCodeNumber" expect (oCustomer:ZipCodeNumber) TO_BE( "04058-000" )
+		context "CityName" expect (oCustomer:CityName) TO_BE( "Sao Paulo" )
+		context "CityStateInitials" expect (oCustomer:CityStateInitials) TO_BE( "SP" )
+		context "CreatedAt Length" expect (Len(oCustomer:CreatedAt)) TO_BE(23)
+		context "UpdatedAt Length" expect (Len(oCustomer:UpdatedAt)) TO_BE(23)
+		context "and checking if it was found" expect (oCustomer:Found()) TO_BE_TRUTHY
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
 	oCustomer := CustomerModel():New(DB_NAME)
-	describe "oCustomer:FindById( cGUID )"
-		describe "oCustomer:FeedProperties()"
-			oCustomer:FindById( cGUID )
-			oCustomer:FeedProperties()
-			check_properties( oCustomer ) WITH CONTEXT
-		enddescribe
-	enddescribe
-	oCustomer := oCustomer:Destroy()
-
-	oCustomer := CustomerModel():New(DB_NAME)
-	describe "oCustomer:FindByCustomerName( cCustomerName )"
-		describe "oCustomer:FeedProperties()"
-			oCustomer:FindByCustomerName( "PRIMEIRO CLIENTE" )
-			oCustomer:FeedProperties()
-			check_properties( oCustomer ) WITH CONTEXT
-		enddescribe
+	describe "oCustomer:FindByCustomerName( 'PRIMEIRO CLIENTE' ):CustomerName --> 'PRIMEIRO CLIENTE'"
+		context "FindByCustomerName" ;
+			expect(oCustomer:FindByCustomerName( 'PRIMEIRO CLIENTE' ):CustomerName) ;
+			TO_BE("PRIMEIRO CLIENTE")
+		context "and checking if it was found" expect (oCustomer:Found()) TO_BE_TRUTHY
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
 	oCustomer := CustomerModel():New(DB_NAME)
 	describe "oCustomer:FindById( cID )"
-		oCustomer:FindById( 999 )
+		oCustomer:FindById( "999" )
 		describe "When Id doesn't exist"
 			context "and checking if it was found" expect (oCustomer:Found()) TO_BE_FALSY
 		enddescribe
@@ -226,12 +228,9 @@ FUNCTION oCustomer_FindAll() FROM CONTEXT
 		context "oCustomer RecordSetLength property" expect(oCustomer:RecordSetLength) TO_BE(2)
 		context "oCustomer Found method" expect(oCustomer:Found) TO_BE_TRUTHY
 		context "oCustomer FoundMany method" expect(oCustomer:FoundMany) TO_BE_TRUTHY
-
-		describe "oCustomer:FeedProperties()"
-			describe "oCustomer:RecordSet"
-				context "customer_name in oCustomer:RecorSet first record" expect(oCustomer:RecordSet[01]["CUSTOMER_NAME"]) 	NOT_TO_BE_NIL
-				context "customer_name in oCustomer:RecorSet second record" expect(oCustomer:RecordSet[02]["CUSTOMER_NAME"]) 	NOT_TO_BE_NIL
-			enddescribe
+		describe "oCustomer:RecordSet"
+			context "customer_name in oCustomer:RecorSet first record" expect(oCustomer:RecordSet[01]["CUSTOMER_NAME"])		TO_BE("PRIMEIRO CLIENTE")
+			context "customer_name in oCustomer:RecorSet second record" expect(oCustomer:RecordSet[02]["CUSTOMER_NAME"]) 	TO_BE("SEGUNDO CLIENTE")
 		enddescribe
 	enddescribe
 	aIDs := { oCustomer:RecordSet[01]["ID"], oCustomer:RecordSet[02]["ID"] }
@@ -288,7 +287,7 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 	enddescribe
 
 	describe "When trying to update name to an existent CustomerName"
-		describe "Insert third customer"
+		describe "Insert 3# customer"
 			seed_costumer_fields(oCustomer)
 			with object oCustomer
 				:CustomerName := "TERCEIRO CLIENTE"
@@ -305,7 +304,7 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 	enddescribe
 
 	describe "When updating any field, UPDATED_AT field must be updated"
-		describe "Insert third customer"
+		describe "Insert 4# customer"
 			seed_costumer_fields(oCustomer)
 			with object oCustomer
 				:CustomerName := "QUARTO CLIENTE"

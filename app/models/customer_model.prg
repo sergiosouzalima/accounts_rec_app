@@ -3,7 +3,7 @@
     Program......: customer_class.prg
     Description..: Customer Class
     Author.......: Sergio Lima
-    Updated at...: Oct, 2021
+    Updated at...: Nov, 2021
 */
 
 #include "hbclass.ch"
@@ -11,8 +11,7 @@
 
 CREATE CLASS CustomerModel FROM CustomerDao, Model
 
-    EXPORTED:
-		METHOD New( cConnection ) CONSTRUCTOR
+    /*EXPORTED:
         METHOD CustomerName( cCustomerName ) SETGET
         METHOD GenderId( cGenderId ) SETGET
         METHOD Gender( oGender ) SETGET
@@ -25,18 +24,21 @@ CREATE CLASS CustomerModel FROM CustomerDao, Model
         METHOD DocumentNumber( cDocumentNumber ) SETGET
         METHOD ZipCodeNumber( cZipCodeNumber ) SETGET
         METHOD CityName( cCityName ) SETGET
-        METHOD CityStateInitials( cCityStateInitials ) SETGET
+        METHOD CityStateInitials( cCityStateInitials ) SETGET*/
+
+    EXPORTED:
+		METHOD New( cConnection ) CONSTRUCTOR
         METHOD Destroy()
         METHOD Insert()
         METHOD Update( cID )
         METHOD Delete( cID )
-        METHOD FeedProperties( ahRecordSet )
-        METHOD ResetProperties()
+        //METHOD FeedProperties( ahRecordSet )
+        //METHOD ResetProperties()
         METHOD InsertInitialCustomer()
         METHOD BrowseDataPrepare()
 
     HIDDEN:
-        DATA cCustomerName              AS STRING   INIT ""
+        /*DATA cCustomerName              AS STRING   INIT ""
         DATA cGenderId                  AS STRING   INIT ""
         DATA oGender                    AS Object   INIT NIL
         DATA cAddressDescription        AS STRING   INIT ""
@@ -48,7 +50,7 @@ CREATE CLASS CustomerModel FROM CustomerDao, Model
         DATA cDocumentNumber            AS STRING   INIT ""
         DATA cZipCodeNumber             AS STRING   INIT ""
         DATA cCityName                  AS STRING   INIT ""
-        DATA cCityStateInitials         AS STRING   INIT ""
+        DATA cCityStateInitials         AS STRING   INIT ""*/
         DATA oCustomerDao               AS Object   INIT NIL
         METHOD Validation()
         METHOD InsertValidation()
@@ -67,7 +69,7 @@ METHOD Destroy() CLASS CustomerModel
     Self := NIL
 RETURN Self
 
-METHOD CustomerName( cCustomerName ) CLASS CustomerModel
+/*METHOD CustomerName( cCustomerName ) CLASS CustomerModel
     ::cCustomerName := cCustomerName IF hb_IsString(cCustomerName)
 RETURN ::cCustomerName
 
@@ -117,10 +119,10 @@ RETURN ::cCityName
 
 METHOD CityStateInitials( cCityStateInitials ) CLASS CustomerModel
     ::cCityStateInitials := cCityStateInitials IF hb_IsString(cCityStateInitials)
-RETURN ::cCityStateInitials
+RETURN ::cCityStateInitials*/
 
 METHOD Insert() CLASS CustomerModel
-    LOCAL oError := NIL, hRecord := { => }
+    LOCAL oError := NIL, hRecord := { => }, cGUID := ""
 
     TRY
         ::Validation()
@@ -128,13 +130,13 @@ METHOD Insert() CLASS CustomerModel
         hRecord := ::SetPropsToRecordHash(hRecord) IF ::Valid
 
         IF ::Valid
-            ::oCustomerDao:CustomerDao:Insert(hRecord)
+            cGUID := ::oCustomerDao:CustomerDao:Insert(hRecord)
             ::Message := "Cliente cadastrado com sucesso!"
         ENDIF
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
     ENDTRY
-RETURN NIL
+RETURN cGUID
 
 METHOD Update(cID) CLASS CustomerModel
     LOCAL oError := NIL, hRecord := { => }
@@ -263,7 +265,7 @@ METHOD SetPropsToRecordHash(hRecord) CLASS CustomerModel
     }
 RETURN hRecord
 
-METHOD ResetProperties() CLASS CustomerModel
+/*METHOD ResetProperties() CLASS CustomerModel
     LOCAL oError := NIL
 
     TRY
@@ -313,7 +315,7 @@ METHOD FeedProperties() CLASS CustomerModel
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
     ENDTRY
-RETURN NIL
+RETURN NIL*/
 
 METHOD InsertInitialCustomer() CLASS CustomerModel
     LOCAL oError := NIL

@@ -210,7 +210,7 @@ RETURN NIL
 
 METHOD InsertInitialGender() CLASS GenderModel
     LOCAL oError := NIL, e := NIL
-    LOCAL aDescriptions := {"MASCULINO", "FEMININO", "INDEFINIDO", "NAO INFORMADO"}
+    LOCAL aDescriptions := {"MASCULINO", "FEMININO", "OUTROS", "NAO INFORMADO"}
     TRY
         FOR EACH e IN aDescriptions
             Self:GenderDescription := e
