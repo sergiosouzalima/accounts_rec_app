@@ -8,11 +8,11 @@
 
 
 #include "hbclass.ch"
-#include "custom_commands_v1.0.0.ch"
+#include "custom_commands_v1.1.0.ch"
 
 #define SQL_CREATE_TABLE ;
     "CREATE TABLE IF NOT EXISTS GENDER(" + ;
-    " ID VARCHAR2(16) NOT NULL PRIMARY KEY," +;
+    " ID VARCHAR2(36) NOT NULL PRIMARY KEY," +;
     " GENDER_DESCRIPTION VARCHAR2(40) NOT NULL," +;
     " CREATED_AT VARCHAR2(23)," +;
     " UPDATED_AT VARCHAR2(23));" +;

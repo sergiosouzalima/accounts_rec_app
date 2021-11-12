@@ -1,10 +1,10 @@
 /*
-    System.......: 
+    System.......:
     Program......: custom_commands.ch
     Description..: custom commands created for Harbour Language
     Author.......: Sergio Lima
-    Updated at...: Oct, 2021
-    Version......: 1.0
+    Updated at...: Nov, 2021
+    Version......: 1.1
 */
 
 
@@ -14,11 +14,14 @@
 #xcommand FINALLY 			=> ALWAYS
 #xcommand ENDTRY 			=> ENDSEQUENCE
 
+/* Throw() => generate error */
+#xtranslate Throw( <oErr> ) => ( Eval( ErrorBlock(), <oErr> ), Break( <oErr> ) )
+
 // in line IF & UNLESS commands
 #xcommand <Command1> [<Commandn>] IF <lCondition> => IF <lCondition> ; <Command1> [<Commandn>]; ENDIF ;
 // keep this comment line between IF & UNLESS commands
 #xcommand <Command1> [<Commandn>] UNLESS <lCondition> => IF !(<lCondition>) ; <Command1> [<Commandn>]; ENDIF ;
 
-// "repeat until" repetition structure 
+// "repeat until" repetition structure
 #xcommand REPEAT => WHILE .T.
 #xcommand UNTIL <lCondition> => IF <lCondition> ; EXIT; END ; ENDDO ;

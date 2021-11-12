@@ -21,7 +21,7 @@ REQUEST HB_LANG_PT
 #include "hbclass.ch"
 #include "setcurs.ch"
 #include "tbrowse.ch"
-#include "custom_commands_v1.0.0.ch"
+#include "custom_commands_v1.1.0.ch"
 
 // Browse commands
 #define K_m 109 //  Modify

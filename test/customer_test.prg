@@ -21,9 +21,14 @@
 FUNCTION Main()
 
 	begin hbexpect
-		LOCAL oCustomer, aIDs := {}
+		LOCAL oCustomer, oGender := NIL, aIDs := {}
 
 		hb_vfErase(DB_NAME)
+
+		oGender := GenderModel():New(DB_NAME)
+		oGender:CreateTable()
+		oGender:InsertInitialGender()
+		oGender := oGender:Destroy()
 
 		describe "Customer Class"
 
@@ -41,6 +46,10 @@ FUNCTION Main()
 				context "When getting ChangedRecords" expect (oCustomer:Error()) TO_BE_NIL
 			enddescribe
 			oCustomer := oCustomer:Destroy()
+
+			describe "Find_All_When_Empty"
+				Find_All_When_Empty() WITH CONTEXT
+			enddescribe
 
 			describe "oCustomer:Insert()"
 				oCustomer_Insert() WITH CONTEXT
@@ -72,6 +81,23 @@ FUNCTION Main()
 
 RETURN NIL
 
+FUNCTION Find_All_When_Empty() FROM CONTEXT
+	LOCAL oCustomer := NIL
+
+	oCustomer := CustomerModel():New(DB_NAME)
+	describe "When no costumers in Table"
+		describe "Find all customers"
+			describe "oCustomer:FindAll()"
+			enddescribe
+			oCustomer:FindAll()
+			context "oCustomer RecordSetLength property" expect(oCustomer:RecordSetLength) TO_BE_ZERO
+			context "oCustomer Found method" expect(oCustomer:Found) TO_BE_FALSY
+			context "oCustomer FoundMany method" expect(oCustomer:FoundMany) TO_BE_FALSY
+		enddescribe
+	enddescribe
+	oCustomer := oCustomer:Destroy()
+RETURN NIL
+
 FUNCTION oCustomer_Insert() FROM CONTEXT
 	LOCAL oCustomer := NIL
 
@@ -101,7 +127,7 @@ FUNCTION oCustomer_Insert() FROM CONTEXT
 			with object oCustomer
 				:CustomerName := "PRIMEIRO CLIENTE"
 				:BirthDate := "22/01/1980"
-				:GenderId  := 0
+				:GenderId  := ""
 			endwith
 			oCustomer:Insert()
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
@@ -241,7 +267,7 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 			with object oCustomer
 				:CustomerName := "PRIMEIRO CLIENTE"
 				:BirthDate := "22/01/1980"
-				:GenderId  := 0
+				:GenderId  := ""
 			endwith
 			oCustomer:Update( aIDs[1] )
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
@@ -362,10 +388,15 @@ FUNCTION oCustomer_CountAll() FROM CONTEXT
 RETURN NIL
 
 FUNCTION seed_costumer_fields( oCustomer )
+	LOCAL oGender := GenderModel():New(DB_NAME)
+
+	oGender:FindFirst()
+	oGender:FeedProperties()
+
 	with object oCustomer
 		:CustomerName := "PRIMEIRO CLIENTE"
 		:BirthDate := "22/01/1980"
-		:GenderId := 2
+		:GenderId := oGender:Id
 		:AddressDescription := "5th AV, 505"
 		:CountryCodePhoneNumber := "55"
 		:AreaPhoneNumber := "11"
@@ -383,7 +414,7 @@ FUNCTION check_properties( oCustomer ) FROM CONTEXT
 	context "Id" expect (oCustomer:Id) NOT_TO_BE_NIL
 	context "CustomerName" expect (oCustomer:CustomerName) TO_BE( "PRIMEIRO CLIENTE" )
 	context "BirthDate" expect (oCustomer:BirthDate) TO_BE( "22/01/1980" )
-	context "GenderId" expect (oCustomer:GenderId) TO_BE( 2 )
+	context "GenderId" expect (oCustomer:GenderId) NOT_TO_BE_NIL
 	context "AddressDescription" expect (oCustomer:AddressDescription) TO_BE( "5th AV, 505" )
 	context "CountryCodePhoneNumber" expect (oCustomer:CountryCodePhoneNumber) TO_BE( "55" )
 	context "AreaPhoneNumber" expect (oCustomer:AreaPhoneNumber) TO_BE( "11" )

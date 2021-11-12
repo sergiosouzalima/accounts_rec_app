@@ -7,7 +7,7 @@
 */
 
 #include "hbclass.ch"
-#include "custom_commands_v1.0.0.ch"
+#include "custom_commands_v1.1.0.ch"
 
 CREATE CLASS CustomerModel FROM CustomerDao, Model
 
@@ -317,11 +317,14 @@ RETURN NIL
 
 METHOD InsertInitialCustomer() CLASS CustomerModel
     LOCAL oError := NIL
+    LOCAL oGender := GenderModel():New( ::getDBPathDBName() )
     TRY
+        oGender:FindFirst()
+        oGender:FeedProperties()
         WITH OBJECT Self
             :CustomerName := "JOAO DA SILVA."
             :BirthDate := "22/01/1980"
-            :GenderId := GenderModel():New:FindFirst():Id
+            :GenderId := "816b80c0-184d-4c1e-917f-bd2c928a74a7"
             :AddressDescription := "5th AV, 505"
             :CountryCodePhoneNumber := "55"
             :AreaPhoneNumber := "11"

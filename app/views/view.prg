@@ -7,7 +7,7 @@
 */
 
 #include "hbclass.ch"
-#include "custom_commands_v1.0.0.ch"
+#include "custom_commands_v1.1.0.ch"
 #include "box.ch"
 
 //------------------------------------------------------------------
