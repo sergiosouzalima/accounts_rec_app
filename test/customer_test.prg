@@ -274,7 +274,9 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Genero do Cliente nao informado!")
 		enddescribe
 	enddescribe
+	oCustomer := oCustomer:Destroy()
 
+	oCustomer := CustomerModel():New(DB_NAME)
 	describe "When valid data to update"
 		seed_costumer_fields(oCustomer)
 		with object oCustomer
@@ -285,7 +287,9 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_TRUTHY
 		context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente alterado com sucesso!")
 	enddescribe
+	oCustomer := oCustomer:Destroy()
 
+	oCustomer := CustomerModel():New(DB_NAME)
 	describe "When trying to update name to an existent CustomerName"
 		describe "Insert 3# customer"
 			seed_costumer_fields(oCustomer)
@@ -294,6 +298,7 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 			endwith
 			oCustomer:Insert()
 		enddescribe
+		seed_costumer_fields(oCustomer)
 		with object oCustomer
 			:CustomerName := "TERCEIRO CLIENTE"
 		endwith
@@ -302,7 +307,9 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 		context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente ja cadastrado com este nome!")
 	enddescribe
+	oCustomer := oCustomer:Destroy()
 
+	oCustomer := CustomerModel():New(DB_NAME)
 	describe "When updating any field, UPDATED_AT field must be updated"
 		describe "Insert 4# customer"
 			seed_costumer_fields(oCustomer)
@@ -311,7 +318,6 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 			endwith
 			oCustomer:Insert()
 			oCustomer:FindByCustomerName( "QUARTO CLIENTE" )
-			oCustomer:FeedProperties()
 			cID4 := oCustomer:Id
 		enddescribe
 		hb_idleSleep(1)
@@ -327,12 +333,11 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 		describe "oCustomer:FindById( cID4 )" ; enddescribe
 		describe "oCustomer:FeedProperties()"
 			oCustomer:FindById( cID4 )
-			oCustomer:FeedProperties()
 			context "UpdateAt field must be diferent from CreatedAt" expect(oCustomer:CreatedAt) NOT_TO_BE(oCustomer:UpdatedAt)
 		enddescribe
 	enddescribe
-
 	oCustomer := oCustomer:Destroy()
+
 RETURN NIL
 
 FUNCTION oCustomer_Delete(aIDs) FROM CONTEXT

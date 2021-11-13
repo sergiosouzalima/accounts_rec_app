@@ -11,47 +11,17 @@
 
 CREATE CLASS CustomerModel FROM CustomerDao, Model
 
-    /*EXPORTED:
-        METHOD CustomerName( cCustomerName ) SETGET
-        METHOD GenderId( cGenderId ) SETGET
-        METHOD Gender( oGender ) SETGET
-        METHOD AddressDescription( cAddressDescription ) SETGET
-        METHOD CountryCodePhoneNumber( cCountryCodePhoneNumber ) SETGET
-        METHOD AreaPhoneNumber( cAreaPhoneNumber ) SETGET
-        METHOD PhoneNumber( cPhoneNumber ) SETGET
-        METHOD CustomerEmail( cCustomerEmail ) SETGET
-        METHOD BirthDate( cBirthDate ) SETGET
-        METHOD DocumentNumber( cDocumentNumber ) SETGET
-        METHOD ZipCodeNumber( cZipCodeNumber ) SETGET
-        METHOD CityName( cCityName ) SETGET
-        METHOD CityStateInitials( cCityStateInitials ) SETGET*/
-
     EXPORTED:
 		METHOD New( cConnection ) CONSTRUCTOR
         METHOD Destroy()
         METHOD Insert()
         METHOD Update( cID )
         METHOD Delete( cID )
-        //METHOD FeedProperties( ahRecordSet )
-        //METHOD ResetProperties()
         METHOD InsertInitialCustomer()
         METHOD BrowseDataPrepare()
 
     HIDDEN:
-        /*DATA cCustomerName              AS STRING   INIT ""
-        DATA cGenderId                  AS STRING   INIT ""
-        DATA oGender                    AS Object   INIT NIL
-        DATA cAddressDescription        AS STRING   INIT ""
-        DATA cCountryCodePhoneNumber    AS STRING   INIT ""
-        DATA cAreaPhoneNumber           AS STRING   INIT ""
-        DATA cPhoneNumber               AS STRING   INIT ""
-        DATA cCustomerEmail             AS STRING   INIT ""
-        DATA cBirthDate                 AS STRING   INIT ""
-        DATA cDocumentNumber            AS STRING   INIT ""
-        DATA cZipCodeNumber             AS STRING   INIT ""
-        DATA cCityName                  AS STRING   INIT ""
-        DATA cCityStateInitials         AS STRING   INIT ""*/
-        DATA oCustomerDao               AS Object   INIT NIL
+        DATA oCustomerDao   AS Object   INIT NIL
         METHOD Validation()
         METHOD InsertValidation()
         METHOD UpdateValidation()
@@ -68,58 +38,6 @@ RETURN Self
 METHOD Destroy() CLASS CustomerModel
     Self := NIL
 RETURN Self
-
-/*METHOD CustomerName( cCustomerName ) CLASS CustomerModel
-    ::cCustomerName := cCustomerName IF hb_IsString(cCustomerName)
-RETURN ::cCustomerName
-
-METHOD GenderId( cGenderId ) CLASS CustomerModel
-    ::cGenderId := cGenderId IF hb_IsString(cGenderId)
-RETURN ::cGenderId
-
-METHOD Gender( oGender ) CLASS CustomerModel
-    ::oGender := oGender IF hb_IsObject(oGender) .OR. oGender == NIL
-RETURN ::oGender
-
-METHOD AddressDescription( cAddressDescription ) CLASS CustomerModel
-    ::cAddressDescription := cAddressDescription IF hb_IsString(cAddressDescription)
-RETURN ::cAddressDescription
-
-METHOD CountryCodePhoneNumber( cCountryCodePhoneNumber ) CLASS CustomerModel
-    ::cCountryCodePhoneNumber := cCountryCodePhoneNumber IF hb_IsString(cCountryCodePhoneNumber)
-RETURN ::cCountryCodePhoneNumber
-
-METHOD AreaPhoneNumber( cAreaPhoneNumber ) CLASS CustomerModel
-    ::cAreaPhoneNumber := cAreaPhoneNumber IF hb_IsString(cAreaPhoneNumber)
-RETURN ::cAreaPhoneNumber
-
-METHOD PhoneNumber( cPhoneNumber ) CLASS CustomerModel
-    ::cPhoneNumber := cPhoneNumber IF hb_IsString(cPhoneNumber)
-RETURN ::cPhoneNumber
-
-METHOD CustomerEmail( cCustomerEmail ) CLASS CustomerModel
-    ::cCustomerEmail := cCustomerEmail IF hb_IsString(cCustomerEmail)
-RETURN ::cCustomerEmail
-
-METHOD BirthDate( cBirthDate ) CLASS CustomerModel
-    ::cBirthDate := cBirthDate IF hb_IsString(cBirthDate) // Sqlite3: Date Type is String
-RETURN ::cBirthDate
-
-METHOD DocumentNumber( cDocumentNumber ) CLASS CustomerModel
-    ::cDocumentNumber := cDocumentNumber IF hb_IsString(cDocumentNumber)
-RETURN ::cDocumentNumber
-
-METHOD ZipCodeNumber( cZipCodeNumber ) CLASS CustomerModel
-    ::cZipCodeNumber := cZipCodeNumber IF hb_IsString(cZipCodeNumber)
-RETURN ::cZipCodeNumber
-
-METHOD CityName( cCityName ) CLASS CustomerModel
-    ::cCityName := cCityName IF hb_IsString(cCityName)
-RETURN ::cCityName
-
-METHOD CityStateInitials( cCityStateInitials ) CLASS CustomerModel
-    ::cCityStateInitials := cCityStateInitials IF hb_IsString(cCityStateInitials)
-RETURN ::cCityStateInitials*/
 
 METHOD Insert() CLASS CustomerModel
     LOCAL oError := NIL, hRecord := { => }, cGUID := ""
@@ -214,12 +132,10 @@ METHOD UpdateValidation(cID) CLASS CustomerModel
     TRY
         ::Valid := .F.
 
-        ::oCustomerDao:CustomerDao:FindById( cID )
-        IF ::oCustomerDao:CustomerDao:NotFound()
+        IF !::SimpleSearch( ::cSqlFindById, { "#ID" => cID } )
             ::Message := "Cliente nao encontrado com Id: " + cID
         ELSE
-            ::oCustomerDao:CustomerDao:FindCustomerAvoidDup( cID, ::CustomerName )
-            IF ::oCustomerDao:CustomerDao:Found()
+            IF ::SimpleSearch( ::cSqlAvoidDup, { "#ID" => cID, "#CUSTOMER_NAME" => ::CustomerName } )
                 ::Message := "Cliente ja cadastrado com este nome!"
             ELSE
                 ::Valid := .T.
@@ -264,58 +180,6 @@ METHOD SetPropsToRecordHash(hRecord) CLASS CustomerModel
         "#CITY_STATE_INITIALS"          =>  ::CityStateInitials ;
     }
 RETURN hRecord
-
-/*METHOD ResetProperties() CLASS CustomerModel
-    LOCAL oError := NIL
-
-    TRY
-        ::Id                    := ""
-        ::CustomerName          := ""
-        ::BirthDate             := ""
-        ::GenderId              := ""
-        ::AddressDescription    := ""
-        ::CountryCodePhoneNumber:= ""
-        ::AreaPhoneNumber       := ""
-        ::PhoneNumber           := ""
-        ::CustomerEmail         := ""
-        ::DocumentNumber        := ""
-        ::ZipCodeNumber         := ""
-        ::CityName              := ""
-        ::CityStateInitials     := ""
-        ::CreatedAt             := ""
-        ::UpdatedAt             := ""
-    CATCH oError
-        ::oCustomerDao:CustomerDao:Error := oError
-    ENDTRY
-RETURN NIL
-
-METHOD FeedProperties() CLASS CustomerModel
-    LOCAL oError := NIL
-    LOCAL ahRecordSet := NIL, oUtilities := Utilities():New()
-
-    RETURN .F. IF ::oCustomerDao:CustomerDao:NotFound()
-
-    TRY
-        ahRecordSet := ::oCustomerDao:CustomerDao:RecordSet[01]
-        ::Id                    := oUtilities:getStringValueFromHash (ahRecordSet, "ID")
-        ::CustomerName          := oUtilities:getStringValueFromHash (ahRecordSet, "CUSTOMER_NAME")
-        ::BirthDate             := oUtilities:getStringValueFromHash (ahRecordSet, "BIRTH_DATE")
-        ::GenderId              := oUtilities:getStringValueFromHash (ahRecordSet, "GENDER_ID")
-        ::AddressDescription    := oUtilities:getStringValueFromHash (ahRecordSet, "ADDRESS_DESCRIPTION")
-        ::CountryCodePhoneNumber:= oUtilities:getStringValueFromHash (ahRecordSet, "COUNTRY_CODE_PHONE_NUMBER")
-        ::AreaPhoneNumber       := oUtilities:getStringValueFromHash (ahRecordSet, "AREA_PHONE_NUMBER")
-        ::PhoneNumber           := oUtilities:getStringValueFromHash (ahRecordSet, "PHONE_NUMBER")
-        ::CustomerEmail         := oUtilities:getStringValueFromHash (ahRecordSet, "CUSTOMER_EMAIL")
-        ::DocumentNumber        := oUtilities:getStringValueFromHash (ahRecordSet, "DOCUMENT_NUMBER")
-        ::ZipCodeNumber         := oUtilities:getStringValueFromHash (ahRecordSet, "ZIP_CODE_NUMBER")
-        ::CityName              := oUtilities:getStringValueFromHash (ahRecordSet, "CITY_NAME")
-        ::CityStateInitials     := oUtilities:getStringValueFromHash (ahRecordSet, "CITY_STATE_INITIALS")
-        ::CreatedAt             := oUtilities:getStringValueFromHash (ahRecordSet, "CREATED_AT")
-        ::UpdatedAt             := oUtilities:getStringValueFromHash (ahRecordSet, "UPDATED_AT")
-    CATCH oError
-        ::oCustomerDao:CustomerDao:Error := oError
-    ENDTRY
-RETURN NIL*/
 
 METHOD InsertInitialCustomer() CLASS CustomerModel
     LOCAL oError := NIL

@@ -118,7 +118,7 @@
     " CREATED_AT," +;
     " UPDATED_AT" +;
     " FROM CUSTOMER" +;
-    " WHERE ID <> '#ID' AND CUSTOMER_NAME = '#CUSTOMER_NAME';"
+    " WHERE CUSTOMER_NAME = '#CUSTOMER_NAME' AND ID <> '#ID';"
 
 #define SQL_ALL ;
     "SELECT" +;
@@ -213,8 +213,12 @@ CREATE CLASS CustomerDao INHERIT PersistenceDao
         METHOD  FindFirst()
         METHOD  TableEmpty()
 
+    EXPORTED:
+        DATA    cSqlFindById    AS STRING   INIT SQL_FIND_BY_ID
+        DATA    cSqlAvoidDup    AS STRING   INIT SQL_AVOID_DUP
+
     HIDDEN:
-        DATA oPersistenceDao   AS Object   INIT NIL
+        DATA    oPersistenceDao AS Object   INIT NIL
 
     ERROR HANDLER OnError( xParam )
 ENDCLASS
@@ -301,7 +305,6 @@ METHOD ResetProperties() CLASS CustomerDao
         ::CreatedAt             := ""
         ::UpdatedAt             := ""
     CATCH oError
-        //::oCustomerDao:CustomerDao:Error := oError
         ::Error := oError
     ENDTRY
 RETURN NIL
@@ -310,11 +313,8 @@ METHOD FeedProperties() CLASS CustomerDao
     LOCAL oError := NIL
     LOCAL ahRecordSet := NIL, oUtilities := Utilities():New()
 
-    //RETURN .F. IF ::oCustomerDao:CustomerDao:NotFound()
     RETURN .F. IF ::NotFound()
-
     TRY
-        //ahRecordSet := ::oCustomerDao:CustomerDao:RecordSet[01]
         ahRecordSet := ::RecordSet[01]
         ::Id                    := oUtilities:getStringValueFromHash (ahRecordSet, "ID")
         ::CustomerName          := oUtilities:getStringValueFromHash (ahRecordSet, "CUSTOMER_NAME")
@@ -332,7 +332,6 @@ METHOD FeedProperties() CLASS CustomerDao
         ::CreatedAt             := oUtilities:getStringValueFromHash (ahRecordSet, "CREATED_AT")
         ::UpdatedAt             := oUtilities:getStringValueFromHash (ahRecordSet, "UPDATED_AT")
     CATCH oError
-        //::oCustomerDao:CustomerDao:Error := oError
         ::Error := oError
     ENDTRY
 RETURN NIL
@@ -391,20 +390,6 @@ METHOD Delete( cID ) CLASS CustomerDao
     ENDTRY
 RETURN NIL
 
-METHOD FindById( cID ) CLASS CustomerDao
-    LOCAL oError := NIL, hRecord := { => }
-
-    TRY
-        ::InitStatusIndicators()
-        BREAK IF Empty(cID)
-        hRecord["#ID"] := cID
-        ::FindBy( hRecord, SQL_FIND_BY_ID )
-        ::FeedProperties()
-    CATCH oError
-        ::Error := oError
-    ENDTRY
-RETURN Self
-
 METHOD CountAll() CLASS CustomerDao
     LOCAL oError := NIL, hRecord := { => }
     LOCAL ahRecordSet := NIL, oUtilities := Utilities():New(), nNumberOfRecords := 0
@@ -427,6 +412,20 @@ METHOD TableEmpty() CLASS CustomerDao
         ::Error := oError
     ENDTRY
 RETURN nNumberOfRecords == 0
+
+METHOD FindById( cID ) CLASS CustomerDao
+    LOCAL oError := NIL, hRecord := { => }
+
+    TRY
+        ::InitStatusIndicators()
+        BREAK IF Empty(cID)
+        hRecord["#ID"] := cID
+        ::FindBy( hRecord, SQL_FIND_BY_ID )
+        ::FeedProperties()
+    CATCH oError
+        ::Error := oError
+    ENDTRY
+RETURN Self
 
 METHOD FindByCustomerName( cCustomerName ) CLASS CustomerDao
     LOCAL oError := NIL,  hRecord := { => }
@@ -451,10 +450,11 @@ METHOD FindCustomerAvoidDup( cID, cCustomerName ) CLASS CustomerDao
         hRecord["#ID"] := cID
         hRecord["#CUSTOMER_NAME"] := cCustomerName
         ::FindBy( hRecord, SQL_AVOID_DUP )
+        ::FeedProperties()
     CATCH oError
         ::Error := oError
     ENDTRY
-RETURN NIL
+RETURN Self
 
 METHOD FindAll() CLASS CustomerDao
     LOCAL oError := NIL,  hRecord := { => }
