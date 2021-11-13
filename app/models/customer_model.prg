@@ -40,16 +40,16 @@ METHOD Destroy() CLASS CustomerModel
 RETURN Self
 
 METHOD Insert() CLASS CustomerModel
-    LOCAL oError := NIL, hRecord := { => }, cGUID := ""
+    LOCAL oError := NIL, hRecord := { => }, cGUID := "", lValid := .F.
 
     TRY
-        ::Validation()
-        ::InsertValidation() IF ::Valid
-        hRecord := ::SetPropsToRecordHash(hRecord) IF ::Valid
+        lValid := ::Validation() .AND. ::InsertValidation()
+        hRecord := ::SetPropsToRecordHash(hRecord) IF lValid
 
-        IF ::Valid
+        IF lValid
             cGUID := ::oCustomerDao:CustomerDao:Insert(hRecord)
             ::Message := "Cliente cadastrado com sucesso!"
+            ::Valid := lValid
         ENDIF
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
@@ -57,16 +57,16 @@ METHOD Insert() CLASS CustomerModel
 RETURN cGUID
 
 METHOD Update(cID) CLASS CustomerModel
-    LOCAL oError := NIL, hRecord := { => }
+    LOCAL oError := NIL, hRecord := { => }, lValid := .F.
 
     TRY
-        ::Validation()
-        ::UpdateValidation(cID) IF ::Valid
-        hRecord := ::SetPropsToRecordHash(hRecord) IF ::Valid
+        lValid := ::Validation() .AND. ::UpdateValidation(cID)
+        hRecord := ::SetPropsToRecordHash(hRecord) IF lValid
 
-        IF ::Valid
+        IF lValid
             ::oCustomerDao:CustomerDao:Update(cID, hRecord)
             ::Message := "Cliente alterado com sucesso!"
+            ::Valid := lValid
         ENDIF
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
@@ -77,11 +77,10 @@ METHOD Delete(cID) CLASS CustomerModel
     LOCAL oError := NIL
 
     TRY
-        ::DeleteValidation(cID)
-
-        IF ::Valid
+        IF ::DeleteValidation(cID)
             ::oCustomerDao:CustomerDao:Delete(cID)
             ::Message := "Cliente excluido com sucesso!"
+            ::Valid := .T.
         ENDIF
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
@@ -89,7 +88,7 @@ METHOD Delete(cID) CLASS CustomerModel
 RETURN NIL
 
 METHOD Validation() CLASS CustomerModel
-    LOCAL oError := NIL, nI := 0, lCondition := .F., nConditions := 0
+    LOCAL oError := NIL, nI := 0, lCondition := .F., nConditions := 0, lValid := .F.
     LOCAL aValidation := { ;
             { {|| Empty(::CustomerName)}    , "Nome do Cliente nao informado!"}, ;
             { {|| Empty(::BirthDate)}       , "Data de Nascimento do Cliente nao informada!"}, ;
@@ -97,71 +96,55 @@ METHOD Validation() CLASS CustomerModel
         }
 
     TRY
-        ::Valid := .F.
         nConditions := Len(aValidation)
-
         Repeat
             ::Message := aValidation[nI][2] IF (lCondition := Eval(aValidation[++nI][1]))
         Until nI >= nConditions .OR. lCondition
-
-        ::Valid := !lCondition
+        lValid := !lCondition
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
     ENDTRY
-RETURN NIL
+RETURN lValid
 
 METHOD InsertValidation() CLASS CustomerModel
-    LOCAL oError := NIL
+    LOCAL oError := NIL, lValid := .F., lFound := .F.
 
     TRY
-        ::Valid := .F.
-        ::oCustomerDao:CustomerDao:FindByCustomerName( ::CustomerName )
-        IF ::oCustomerDao:CustomerDao:Found()
-            ::Message := "Cliente ja cadastrado com este nome!"
-        ELSE
-            ::Valid := .T.
-        ENDIF
+        lFound := ::SimpleSearch( ::cSqlFindByCustomerName, { "#CUSTOMER_NAME" => ::CustomerName } )
+        ::Message := "Cliente ja cadastrado com este nome!" IF lFound
+        lValid := !lFound
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
     ENDTRY
-RETURN NIL
+RETURN lValid
 
 METHOD UpdateValidation(cID) CLASS CustomerModel
-    LOCAL oError := NIL
+    LOCAL oError := NIL, lValid := .F., lFound := .F.
 
     TRY
-        ::Valid := .F.
-
         IF !::SimpleSearch( ::cSqlFindById, { "#ID" => cID } )
             ::Message := "Cliente nao encontrado com Id: " + cID
         ELSE
-            IF ::SimpleSearch( ::cSqlAvoidDup, { "#ID" => cID, "#CUSTOMER_NAME" => ::CustomerName } )
-                ::Message := "Cliente ja cadastrado com este nome!"
-            ELSE
-                ::Valid := .T.
-            ENDIF
+            lFound := ::SimpleSearch( ::cSqlAvoidDup, { "#ID" => cID, "#CUSTOMER_NAME" => ::CustomerName } )
+            ::Message := "Cliente ja cadastrado com este nome!" IF lFound
+            lValid := !lFound
         ENDIF
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
     ENDTRY
-RETURN NIL
+RETURN lValid
 
 METHOD DeleteValidation(cID) CLASS CustomerModel
-    LOCAL oError := NIL
+    LOCAL oError := NIL, lValid := .F., lFound := .F.
 
     TRY
-        ::Valid := .F.
-
-        ::oCustomerDao:CustomerDao:FindById( cID )
-        IF ::oCustomerDao:CustomerDao:NotFound()
-            ::Message := "Cliente nao encontrado com Id: " + cID
-        ELSE
-            ::Valid := .T.
-        ENDIF
+        lFound := ::SimpleSearch( ::cSqlFindById, { "#ID" => cID } )
+        ::Message := "Cliente nao encontrado com Id: " + cID UNLESS lFound
+        lValid := lFound
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
     ENDTRY
-RETURN NIL
+RETURN lValid
 
 METHOD SetPropsToRecordHash(hRecord) CLASS CustomerModel
     hRecord := { ;

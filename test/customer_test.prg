@@ -135,27 +135,30 @@ FUNCTION oCustomer_Insert() FROM CONTEXT
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Genero do Cliente nao informado!")
 		enddescribe
 	enddescribe
+	oCustomer := oCustomer:Destroy()
 
 	describe "When valid data to insert"
+		oCustomer := CustomerModel():New(DB_NAME)
 		seed_costumer_fields(oCustomer)
 		cUID := oCustomer:Insert()
 		context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_TRUTHY
 		context "When getting new GUID LENGTH" expect (Len(cUID)) TO_BE(36)
 		context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente cadastrado com sucesso!")
+		oCustomer := oCustomer:Destroy()
 	enddescribe
 
 	describe "When trying to insert existent CustomerName"
-		with object oCustomer
-			:CustomerName := "PRIMEIRO CLIENTE"
-		endwith
+		oCustomer := CustomerModel():New(DB_NAME)
+		seed_costumer_fields(oCustomer)
+		oCustomer:CustomerName := "PRIMEIRO CLIENTE"
 		oCustomer:Insert()
 		context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 		context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente ja cadastrado com este nome!")
+		oCustomer := oCustomer:Destroy()
 	enddescribe
 
-	oCustomer := oCustomer:Destroy()
 RETURN NIL
 
 
@@ -289,25 +292,24 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
-	oCustomer := CustomerModel():New(DB_NAME)
+
 	describe "When trying to update name to an existent CustomerName"
 		describe "Insert 3# customer"
+			oCustomer := CustomerModel():New(DB_NAME)
 			seed_costumer_fields(oCustomer)
-			with object oCustomer
-				:CustomerName := "TERCEIRO CLIENTE"
-			endwith
+			oCustomer:CustomerName := "TERCEIRO CLIENTE"
 			oCustomer:Insert()
+			oCustomer := oCustomer:Destroy()
 		enddescribe
+		oCustomer := CustomerModel():New(DB_NAME)
 		seed_costumer_fields(oCustomer)
-		with object oCustomer
-			:CustomerName := "TERCEIRO CLIENTE"
-		endwith
+		oCustomer:CustomerName := "TERCEIRO CLIENTE"
 		oCustomer:Update( aIDs[1] )
 		context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 		context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente ja cadastrado com este nome!")
+		oCustomer := oCustomer:Destroy()
 	enddescribe
-	oCustomer := oCustomer:Destroy()
 
 	oCustomer := CustomerModel():New(DB_NAME)
 	describe "When updating any field, UPDATED_AT field must be updated"

@@ -214,8 +214,9 @@ CREATE CLASS CustomerDao INHERIT PersistenceDao
         METHOD  TableEmpty()
 
     EXPORTED:
-        DATA    cSqlFindById    AS STRING   INIT SQL_FIND_BY_ID
-        DATA    cSqlAvoidDup    AS STRING   INIT SQL_AVOID_DUP
+        DATA    cSqlFindById            AS STRING   INIT SQL_FIND_BY_ID
+        DATA    cSqlAvoidDup            AS STRING   INIT SQL_AVOID_DUP
+        DATA    cSqlFindByCustomerName  AS STRING   INIT SQL_FIND_BY_CUSTOMER_NAME
 
     HIDDEN:
         DATA    oPersistenceDao AS Object   INIT NIL
@@ -225,6 +226,7 @@ ENDCLASS
 
 METHOD New( cConnection ) CLASS CustomerDao
     ::oPersistenceDao := ::Super:New( hb_defaultValue(cConnection, "database.s3db") )
+    ::InitStatusIndicators()
 RETURN Self
 
 METHOD Destroy() CLASS CustomerDao
@@ -352,7 +354,6 @@ METHOD Insert( hRecord ) CLASS CustomerDao
     LOCAL oError := NIL, oUtilities := Utilities():New()
     LOCAL cGUID := ""
     TRY
-        ::InitStatusIndicators()
         BREAK IF Empty(hRecord)
         hRecord["#ID"] := ( cGUID := oUtilities:GetGUID() )
         hRecord["#CREATED_AT"] := oUtilities:GetTimeStamp()
@@ -367,7 +368,6 @@ METHOD Update( cID, hRecord ) CLASS CustomerDao
     LOCAL oError := NIL
 
     TRY
-        ::InitStatusIndicators()
         BREAK IF Empty(hRecord) .OR. Empty(cID)
         hRecord["#ID"] := cID
         hRecord["#UPDATED_AT"] := Utilities():New():GetTimeStamp()
@@ -381,7 +381,6 @@ METHOD Delete( cID ) CLASS CustomerDao
     LOCAL oError := NIL, hRecord := { => }
 
     TRY
-        ::InitStatusIndicators()
         BREAK IF Empty(cID)
         hRecord["#ID"] := cID
         ::ExecuteCommand( hb_StrReplace( SQL_DELETE, hRecord ) )
@@ -395,7 +394,6 @@ METHOD CountAll() CLASS CustomerDao
     LOCAL ahRecordSet := NIL, oUtilities := Utilities():New(), nNumberOfRecords := 0
 
     TRY
-        ::InitStatusIndicators()
         ::FindBy( hRecord, SQL_COUNT_ALL )
         ahRecordSet := ::RecordSet[01]
         nNumberOfRecords := oUtilities:getNumericValueFromHash(ahRecordSet, "NUMBER_OF_RECORDS")
@@ -417,7 +415,6 @@ METHOD FindById( cID ) CLASS CustomerDao
     LOCAL oError := NIL, hRecord := { => }
 
     TRY
-        ::InitStatusIndicators()
         BREAK IF Empty(cID)
         hRecord["#ID"] := cID
         ::FindBy( hRecord, SQL_FIND_BY_ID )
@@ -431,7 +428,6 @@ METHOD FindByCustomerName( cCustomerName ) CLASS CustomerDao
     LOCAL oError := NIL,  hRecord := { => }
 
     TRY
-        ::InitStatusIndicators()
         BREAK IF Empty(cCustomerName)
         hRecord["#CUSTOMER_NAME"] := cCustomerName
         ::FindBy( hRecord, SQL_FIND_BY_CUSTOMER_NAME )
@@ -445,7 +441,6 @@ METHOD FindCustomerAvoidDup( cID, cCustomerName ) CLASS CustomerDao
     LOCAL oError := NIL,  hRecord := { => }
 
     TRY
-        ::InitStatusIndicators()
         BREAK IF Empty(cID) .or. Empty(cCustomerName)
         hRecord["#ID"] := cID
         hRecord["#CUSTOMER_NAME"] := cCustomerName
@@ -460,7 +455,6 @@ METHOD FindAll() CLASS CustomerDao
     LOCAL oError := NIL,  hRecord := { => }
 
     TRY
-        ::InitStatusIndicators()
         ::FindBy( hRecord, SQL_ALL )
     CATCH oError
         ::Error := oError
@@ -471,7 +465,6 @@ METHOD FindFirst() CLASS CustomerDao
     LOCAL oError := NIL,  hRecord := { => }
 
     TRY
-        ::InitStatusIndicators()
         ::FindBy( hRecord, SQL_FIRST )
         ::FeedProperties()
     CATCH oError
