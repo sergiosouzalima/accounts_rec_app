@@ -473,6 +473,12 @@ METHOD FindFirst() CLASS CustomerDao
 RETURN Self
 
 METHOD ONERROR( xParam ) CLASS CustomerDao
+    LOCAL xResult := NIL
+    xResult := Error():New():getOnErrorMessage( Self, xParam, __GetMessage() )
+    ? "*** Error => ", xResult
+RETURN xResult
+
+/*METHOD ONERROR( xParam ) CLASS CustomerDao
     LOCAL cCol := __GetMessage(), xResult
 
     IF Left( cCol, 1 ) == "_" // underscore means it's a variable
@@ -489,4 +495,4 @@ METHOD ONERROR( xParam ) CLASS CustomerDao
        xResult := "Method not created " + cCol
     ENDIF
     ? "*** Error => ", xResult
-RETURN xResult
+RETURN xResult*/
