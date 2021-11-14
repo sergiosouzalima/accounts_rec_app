@@ -51,7 +51,7 @@ FUNCTION Main()
 				Find_All_When_Empty() WITH CONTEXT
 			enddescribe
 
-			describe "oCustomer:Insert()"
+			describe "oCustomer:Save()"
 				oCustomer_Insert() WITH CONTEXT
 			enddescribe
 
@@ -63,7 +63,7 @@ FUNCTION Main()
 				oCustomer_FindBy() WITH CONTEXT
 			enddescribe
 
-			describe "oCustomer:Update( cId )"
+			describe "oCustomer:Save( cId )"
 				oCustomer_Update( aIDs ) WITH CONTEXT
 			enddescribe
 
@@ -106,7 +106,7 @@ FUNCTION oCustomer_Insert() FROM CONTEXT
 		describe "CustomerName"
 			seed_costumer_fields(oCustomer)
 			oCustomer:CustomerName := ""
-			oCustomer:Insert()
+			oCustomer:Save()
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Nome do Cliente nao informado!")
@@ -117,7 +117,7 @@ FUNCTION oCustomer_Insert() FROM CONTEXT
 				:CustomerName := "PRIMEIRO CLIENTE"
 				:BirthDate := ""
 			endwith
-			oCustomer:Insert()
+			oCustomer:Save()
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Data de Nascimento do Cliente nao informada!")
@@ -129,7 +129,7 @@ FUNCTION oCustomer_Insert() FROM CONTEXT
 				:BirthDate := "22/01/1980"
 				:GenderId  := ""
 			endwith
-			oCustomer:Insert()
+			oCustomer:Save()
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Genero do Cliente nao informado!")
@@ -140,7 +140,7 @@ FUNCTION oCustomer_Insert() FROM CONTEXT
 	describe "When valid data to insert"
 		oCustomer := CustomerModel():New(DB_NAME)
 		seed_costumer_fields(oCustomer)
-		cUID := oCustomer:Insert()
+		cUID := oCustomer:Save()
 		context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_TRUTHY
 		context "When getting new GUID LENGTH" expect (Len(cUID)) TO_BE(36)
@@ -152,7 +152,7 @@ FUNCTION oCustomer_Insert() FROM CONTEXT
 		oCustomer := CustomerModel():New(DB_NAME)
 		seed_costumer_fields(oCustomer)
 		oCustomer:CustomerName := "PRIMEIRO CLIENTE"
-		oCustomer:Insert()
+		oCustomer:Save()
 		context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 		context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente ja cadastrado com este nome!")
@@ -225,7 +225,7 @@ FUNCTION oCustomer_FindAll() FROM CONTEXT
 	with object oCustomer
 		:CustomerName := "SEGUNDO CLIENTE"
 	endwith
-	oCustomer:Insert()
+	oCustomer:Save()
 	describe "Find all customers"
 		oCustomer:FindAll()
 		context "oCustomer RecordSetLength property" expect(oCustomer:RecordSetLength) TO_BE(2)
@@ -248,7 +248,7 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 		seed_costumer_fields(oCustomer)
 		describe "CustomerName"
 			oCustomer:CustomerName := ""
-			oCustomer:Update( aIDs[1] )
+			oCustomer:Save( aIDs[1] )
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Nome do Cliente nao informado!")
@@ -259,7 +259,7 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 				:CustomerName := "PRIMEIRO CLIENTE"
 				:BirthDate := ""
 			endwith
-			oCustomer:Update( aIDs[1] )
+			oCustomer:Save( aIDs[1] )
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Data de Nascimento do Cliente nao informada!")
@@ -271,7 +271,7 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 				:BirthDate := "22/01/1980"
 				:GenderId  := ""
 			endwith
-			oCustomer:Update( aIDs[1] )
+			oCustomer:Save( aIDs[1] )
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Genero do Cliente nao informado!")
@@ -285,7 +285,7 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 		with object oCustomer
 			:CustomerName := "PRIMEIRO CLIENTE MUDOU DE NOME"
 		endwith
-		oCustomer:Update( aIDs[1] )
+		oCustomer:Save( aIDs[1] )
 		context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_TRUTHY
 		context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente alterado com sucesso!")
@@ -298,13 +298,13 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 			oCustomer := CustomerModel():New(DB_NAME)
 			seed_costumer_fields(oCustomer)
 			oCustomer:CustomerName := "TERCEIRO CLIENTE"
-			oCustomer:Insert()
+			oCustomer:Save()
 			oCustomer := oCustomer:Destroy()
 		enddescribe
 		oCustomer := CustomerModel():New(DB_NAME)
 		seed_costumer_fields(oCustomer)
 		oCustomer:CustomerName := "TERCEIRO CLIENTE"
-		oCustomer:Update( aIDs[1] )
+		oCustomer:Save( aIDs[1] )
 		context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 		context "When getting Valid status" expect (oCustomer:Valid) TO_BE_FALSY
 		context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente ja cadastrado com este nome!")
@@ -318,16 +318,16 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 			with object oCustomer
 				:CustomerName := "QUARTO CLIENTE"
 			endwith
-			oCustomer:Insert()
+			oCustomer:Save()
 			oCustomer:FindByCustomerName( "QUARTO CLIENTE" )
 			cID4 := oCustomer:Id
 		enddescribe
 		hb_idleSleep(1)
-		describe "oCustomer:Update( cID4 )"
+		describe "oCustomer:Save( cID4 )"
 			with object oCustomer
 				:CustomerName := "QUARTO CLIENTE COM NOME ALTERADO"
 			endwith
-			oCustomer:Update( cID4 )
+			oCustomer:Save( cID4 )
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_TRUTHY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente alterado com sucesso!")

@@ -19,6 +19,7 @@ CREATE CLASS CustomerModel FROM CustomerDao, Model
         METHOD Delete( cID )
         METHOD InsertInitialCustomer()
         METHOD BrowseDataPrepare()
+        METHOD Save(cID)
 
     HIDDEN:
         DATA oCustomerDao   AS Object   INIT NIL
@@ -38,6 +39,12 @@ RETURN Self
 METHOD Destroy() CLASS CustomerModel
     Self := NIL
 RETURN Self
+
+METHOD Save(cID) CLASS CustomerModel
+    LOCAL lInsert := PCount() == 0, cGUID := NIL
+    cGUID := ::Insert() IF lInsert
+    ::Update(cID) UNLESS lInsert
+RETURN cGUID
 
 METHOD Insert() CLASS CustomerModel
     LOCAL oError := NIL, hRecord := { => }, cGUID := "", lValid := .F.
