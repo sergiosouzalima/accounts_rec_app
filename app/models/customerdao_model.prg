@@ -164,6 +164,15 @@
     " ORDER BY CREATED_AT" +;
     " LIMIT 1;"
 
+#define SQL_GENDER_BY_ID ;
+    "SELECT" +;
+    " ID," +;
+    " GENDER_DESCRIPTION," +;
+    " CREATED_AT," +;
+    " UPDATED_AT" +;
+    " FROM GENDER" +;
+    " WHERE ID = '#ID';"
+
 CREATE CLASS CustomerDao INHERIT PersistenceDao
 
     EXPORTED:
@@ -239,11 +248,22 @@ METHOD CustomerName( cCustomerName ) CLASS CustomerDao
 RETURN ::cCustomerName
 
 METHOD GenderId( cGenderId ) CLASS CustomerDao
-    ::cGenderId := cGenderId IF hb_IsString(cGenderId)
+    LOCAL lValid := hb_IsString(cGenderId), oGender := NIL
+
+    IF lValid
+        ::cGenderId := cGenderId
+        oGender := GenderModel():New( ::oPersistenceDao:pConnection )
+        oGender:FindById( ::cGenderId )
+        ::oGender := oGender IF oGender:Found()
+    ENDIF
 RETURN ::cGenderId
 
 METHOD Gender( oGender ) CLASS CustomerDao
-    ::oGender := oGender IF hb_IsObject(oGender) .OR. oGender == NIL
+    LOCAL lValid := hb_IsObject(oGender) .AND. oGender:ClassName() == "GENDERMODEL"
+    IF lValid
+        ::oGender := oGender
+        ::cGenderId := ::oGender:Id
+    ENDIF
 RETURN ::oGender
 
 METHOD AddressDescription( cAddressDescription ) CLASS CustomerDao
@@ -295,6 +315,7 @@ METHOD ResetProperties() CLASS CustomerDao
         ::CustomerName          := ""
         ::BirthDate             := ""
         ::GenderId              := ""
+        ::oGender               := NIL
         ::AddressDescription    := ""
         ::CountryCodePhoneNumber:= ""
         ::AreaPhoneNumber       := ""
@@ -314,6 +335,7 @@ RETURN NIL
 METHOD FeedProperties() CLASS CustomerDao
     LOCAL oError := NIL
     LOCAL ahRecordSet := NIL, oUtilities := Utilities():New()
+    LOCAL lFound := .F.
 
     RETURN .F. IF ::NotFound()
     TRY

@@ -154,6 +154,8 @@ METHOD DeleteValidation(cID) CLASS CustomerModel
 RETURN lValid
 
 METHOD SetPropsToRecordHash(hRecord) CLASS CustomerModel
+    //"#GENDER_ID"                    =>  ::GenderId, ;
+
     hRecord := { ;
         "#ID"                           =>  ::Id, ;
         "#CUSTOMER_NAME"                =>  ::CustomerName, ;
@@ -180,7 +182,7 @@ METHOD InsertInitialCustomer() CLASS CustomerModel
         WITH OBJECT Self
             :CustomerName := "JOAO DA SILVA."
             :BirthDate := "22/01/1980"
-            :GenderId := "816b80c0-184d-4c1e-917f-bd2c928a74a7"
+            :Gender := oGender
             :AddressDescription := "5th AV, 505"
             :CountryCodePhoneNumber := "55"
             :AreaPhoneNumber := "11"

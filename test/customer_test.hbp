@@ -21,11 +21,11 @@ hbsqlit3.hbc
 ../../utilities_harbour/utilities_class.prg
 ../../error_harbour/error_class.prg
 
+../app/models/genderdao_model.prg
+../app/models/gender_model.prg
 ../app/models/customer_model.prg
 ../app/models/customerdao_model.prg
 ../app/models/model.prg
-../app/models/genderdao_model.prg
-../app/models/gender_model.prg
 ../lib/browse_data.prg
 customer_test.prg
 
