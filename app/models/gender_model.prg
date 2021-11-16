@@ -254,20 +254,7 @@ METHOD BrowseDataPrepare() CLASS GenderModel
 RETURN oBrowseData
 
 METHOD ONERROR( xParam ) CLASS GenderModel
-    LOCAL cCol := __GetMessage(), xResult
-
-    IF Left( cCol, 1 ) == "_" // underscore means it's a variable
-       cCol = Right( cCol, Len( cCol ) - 1 )
-       IF ! __objHasData( Self, cCol )
-          __objAddData( Self, cCol )
-       ENDIF
-       IF xParam == NIL
-          xResult = __ObjSendMsg( Self, cCol )
-       ELSE
-          xResult = __ObjSendMsg( Self, "_" + cCol, xParam )
-       ENDIF
-    ELSE
-       xResult := "Method not created " + cCol
-    ENDIF
+    LOCAL xResult := NIL
+    xResult := Error():New():getOnErrorMessage( Self, xParam, __GetMessage() )
     ? "*** Error => ", xResult
 RETURN xResult

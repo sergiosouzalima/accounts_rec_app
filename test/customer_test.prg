@@ -25,10 +25,10 @@ FUNCTION Main()
 
 		hb_vfErase(DB_NAME)
 
-		oGender := GenderModel():New(DB_NAME)
-		oGender:CreateTable()
-		oGender:InsertInitialGender()
-		oGender := oGender:Destroy()
+		//oGender := GenderModel():New(DB_NAME)
+		//oGender:CreateTable()
+		//oGender:InsertInitialGender()
+		//oGender := oGender:Destroy()
 
 		describe "Customer Class"
 
@@ -47,23 +47,23 @@ FUNCTION Main()
 			enddescribe
 			oCustomer := oCustomer:Destroy()
 
-			describe "Find_All_When_Empty"
+			/*describe "Find_All_When_Empty"
 				Find_All_When_Empty() WITH CONTEXT
-			enddescribe
+			enddescribe*/
 
-			describe "oCustomer:Save()"
+			/*describe "oCustomer:Save()"
 				oCustomer_Insert() WITH CONTEXT
-			enddescribe
+			enddescribe*/
 
-			describe "oCustomer:FindAll()"
+			/*describe "oCustomer:FindAll()"
 				aIDs := oCustomer_FindAll() WITH CONTEXT
-			enddescribe
+			enddescribe*/
 
-			describe "FindBy Methods"
+			/*describe "FindBy Methods"
 				oCustomer_FindBy() WITH CONTEXT
-			enddescribe
+			enddescribe*/
 
-			describe "oCustomer:Save( cId )"
+			/*describe "oCustomer:Save( cId )"
 				oCustomer_Update( aIDs ) WITH CONTEXT
 			enddescribe
 
@@ -73,7 +73,7 @@ FUNCTION Main()
 
 			describe "oCustomer:CountAll()"
 				oCustomer_CountAll() WITH CONTEXT
-			enddescribe
+			enddescribe*/
 
 		enddescribe
 
@@ -82,17 +82,16 @@ FUNCTION Main()
 RETURN NIL
 
 FUNCTION Find_All_When_Empty() FROM CONTEXT
-	LOCAL oCustomer := NIL
+	LOCAL oCustomer := CustomerModel():New(DB_NAME)
+	LOCAL lFound := .F.
 
-	oCustomer := CustomerModel():New(DB_NAME)
 	describe "When no costumers in Table"
 		describe "Find all customers"
-			describe "oCustomer:FindAll()"
+			describe " oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindAll )"
 			enddescribe
-			oCustomer:FindAll()
-			context "oCustomer RecordSetLength property" expect(oCustomer:RecordSetLength) TO_BE_ZERO
-			context "oCustomer Found method" expect(oCustomer:Found) TO_BE_FALSY
-			context "oCustomer FoundMany method" expect(oCustomer:FoundMany) TO_BE_FALSY
+			lFound := oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindAll ):Found()
+			context "oCustomer RecordSetLength property" expect(oCustomer:RecordSetLength()) TO_BE_ZERO
+			context "oCustomer Found method" expect(oCustomer:Found()) TO_BE_FALSY
 		enddescribe
 	enddescribe
 	oCustomer := oCustomer:Destroy()
@@ -166,8 +165,8 @@ FUNCTION oCustomer_FindBy() FROM CONTEXT
 	LOCAL oCustomer := NIL
 
 	oCustomer := CustomerModel():New(DB_NAME)
-	describe "oCustomer:FindFirst()"
-		oCustomer:FindFirst()
+	describe "Get first Customer added"
+		oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindFirst )
 		context "and checking if it was found" expect (oCustomer:Found()) TO_BE_TRUTHY
 		context "Id" expect (oCustomer:Id) NOT_TO_BE_NIL
 		context "CustomerName" expect (oCustomer:CustomerName) TO_BE( "PRIMEIRO CLIENTE" )
@@ -184,31 +183,30 @@ FUNCTION oCustomer_FindBy() FROM CONTEXT
 		context "CityStateInitials" expect (oCustomer:CityStateInitials) TO_BE( "SP" )
 		context "CreatedAt Length" expect (Len(oCustomer:CreatedAt)) TO_BE(23)
 		context "UpdatedAt Length" expect (Len(oCustomer:UpdatedAt)) TO_BE(23)
+	enddescribe
+	oCustomer := oCustomer:Destroy()
+
+	oCustomer := CustomerModel():New(DB_NAME)
+	oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindByCustomerName, { "#CUSTOMER_NAME" => 'PRIMEIRO CLIENTE' } )
+	describe "oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindByCustomerName, { '#CUSTOMER_NAME' => 'PRIMEIRO CLIENTE' } )"
+		context "oCustomer:CustomerName" expect(oCustomer:CustomerName) TO_BE("PRIMEIRO CLIENTE")
 		context "and checking if it was found" expect (oCustomer:Found()) TO_BE_TRUTHY
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
 	oCustomer := CustomerModel():New(DB_NAME)
-	describe "oCustomer:FindByCustomerName( 'PRIMEIRO CLIENTE' ):CustomerName --> 'PRIMEIRO CLIENTE'"
-		context "FindByCustomerName" ;
-			expect(oCustomer:FindByCustomerName( 'PRIMEIRO CLIENTE' ):CustomerName) ;
-			TO_BE("PRIMEIRO CLIENTE")
-		context "and checking if it was found" expect (oCustomer:Found()) TO_BE_TRUTHY
-	enddescribe
-	oCustomer := oCustomer:Destroy()
-
-	oCustomer := CustomerModel():New(DB_NAME)
-	describe "oCustomer:FindById( cID )"
-		oCustomer:FindById( "999" )
-		describe "When Id doesn't exist"
-			context "and checking if it was found" expect (oCustomer:Found()) TO_BE_FALSY
+	describe "oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindById, { '#ID' => '999' } )"
+		//oCustomer:FindById( "999" )
+		describe "When Customer doesn't exist"
+			oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindById, { "#ID" => "999" } )
+			context "oCustomer:Found()" expect (oCustomer:Found()) TO_BE_FALSY
 		enddescribe
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
 	oCustomer := CustomerModel():New(DB_NAME)
-	describe "oCustomer:FindByCustomerName( cCustomerName )"
-		oCustomer:FindByCustomerName( "CLIENTE NAO CADASTRADO" )
+	oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindByCustomerName, { '#CUSTOMER_NAME' => 'JOAO DESCONHECIDO' } )
+	describe "oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindByCustomerName, { '#CUSTOMER_NAME' => 'JOAO DESCONHECIDO' } )"
 		describe "When Customer Name doesn't exist"
 			context "and checking if it was found" expect (oCustomer:Found()) TO_BE_FALSY
 			context "Id" expect (oCustomer:Id) TO_BE( "" )
@@ -228,7 +226,7 @@ FUNCTION oCustomer_FindAll() FROM CONTEXT
 	oCustomer:Save()
 	describe "Find all customers"
 		oCustomer:FindAll()
-		context "oCustomer RecordSetLength property" expect(oCustomer:RecordSetLength) TO_BE(2)
+		context "oCustomer RecordSetLengthgth property" expect(oCustomer:RecordSetLengthgth) TO_BE(2)
 		context "oCustomer Found method" expect(oCustomer:Found) TO_BE_TRUTHY
 		context "oCustomer FoundMany method" expect(oCustomer:FoundMany) TO_BE_TRUTHY
 		describe "oCustomer:RecordSet"
@@ -311,19 +309,26 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 		oCustomer := oCustomer:Destroy()
 	enddescribe
 
-	oCustomer := CustomerModel():New(DB_NAME)
+	//oCustomer := CustomerModel():New(DB_NAME)
 	describe "When updating any field, UPDATED_AT field must be updated"
 		describe "Insert 4# customer"
+			oCustomer := CustomerModel():New(DB_NAME)
 			seed_costumer_fields(oCustomer)
+			oCustomer:CustomerName := "QUARTO CLIENTE"
+			cID4 := oCustomer:Save()
+			oCustomer := oCustomer:Destroy()
+			/*seed_costumer_fields(oCustomer)
 			with object oCustomer
 				:CustomerName := "QUARTO CLIENTE"
 			endwith
 			oCustomer:Save()
 			oCustomer:FindByCustomerName( "QUARTO CLIENTE" )
-			cID4 := oCustomer:Id
+			cID4 := oCustomer:Id*/
 		enddescribe
 		hb_idleSleep(1)
 		describe "oCustomer:Save( cID4 )"
+			oCustomer := CustomerModel():New(DB_NAME)
+			seed_costumer_fields(oCustomer)
 			with object oCustomer
 				:CustomerName := "QUARTO CLIENTE COM NOME ALTERADO"
 			endwith
@@ -331,14 +336,16 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_TRUTHY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente alterado com sucesso!")
+			oCustomer := oCustomer:Destroy()
 		enddescribe
-		describe "oCustomer:FindById( cID4 )" ; enddescribe
-		describe "oCustomer:FeedProperties()"
-			oCustomer:FindById( cID4 )
-			context "UpdateAt field must be diferent from CreatedAt" expect(oCustomer:CreatedAt) NOT_TO_BE(oCustomer:UpdatedAt)
+		describe "oCustomer := CustomerModel():New(DB_NAME)" ; enddescribe
+		describe "oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindById, { '#ID' => cID4 } )"
+			oCustomer := CustomerModel():New(DB_NAME)
+			oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindById, { '#ID' => cID4 } )
+			context "UpdateAt field must be different from CreatedAt" expect(oCustomer:CreatedAt) NOT_TO_BE(oCustomer:UpdatedAt)
+			oCustomer := oCustomer:Destroy()
 		enddescribe
 	enddescribe
-	oCustomer := oCustomer:Destroy()
 
 RETURN NIL
 
@@ -376,7 +383,7 @@ FUNCTION oCustomer_CountAll() FROM CONTEXT
 		enddescribe
 		describe "oCustomer:CountAll() --> nNumberOfRecords"
 			oCustomer:CountAll()
-			context "oCustomer RecordSetLength property" expect(oCustomer:RecordSetLength) TO_BE(1)
+			context "oCustomer RecordSetLengthgth property" expect(oCustomer:RecordSetLengthgth) TO_BE(1)
 			context "oCustomer Found method" expect(oCustomer:Found) TO_BE_TRUTHY
 			context "oCustomer FoundMany method" expect(oCustomer:FoundMany) TO_BE_FALSY
 		enddescribe
@@ -394,15 +401,15 @@ FUNCTION oCustomer_CountAll() FROM CONTEXT
 RETURN NIL
 
 FUNCTION seed_costumer_fields( oCustomer )
-	LOCAL oGender := GenderModel():New(DB_NAME)
+	//LOCAL oGender := GenderModel():New(DB_NAME)
 
-	oGender:FindFirst()
-	oGender:FeedProperties()
+	//oGender:FindFirst()
+	//oGender:FeedProperties()
 
 	with object oCustomer
 		:CustomerName := "PRIMEIRO CLIENTE"
 		:BirthDate := "22/01/1980"
-		:GenderId := oGender:Id
+		:GenderId := Utilities():New():GetGUID()   //oGender:Id
 		:AddressDescription := "5th AV, 505"
 		:CountryCodePhoneNumber := "55"
 		:AreaPhoneNumber := "11"

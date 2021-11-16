@@ -19,6 +19,7 @@ hbsqlit3.hbc
 ../datasourcedao_harbour/datasourcedao_class.prg
 ../persistencedao_harbour/persistencedao_class.prg
 ../utilities_harbour/utilities_class.prg
+../params_harbour/params_class.prg
 ../error_harbour/error_class.prg
 
 accounts_rec_app.prg
@@ -31,8 +32,8 @@ app/models/application_model.prg
 app/models/about_model.prg
 app/models/customerdao_model.prg
 app/models/customer_model.prg
-app/models/genderdao_model.prg
-app/models/gender_model.prg
+## app/models/genderdao_model.prg
+## app/models/gender_model.prg
 
 app/views/view.prg
 app/views/application_view.prg

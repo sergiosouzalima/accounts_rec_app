@@ -117,7 +117,7 @@ METHOD EnvSetup() CLASS Model
 RETURN NIL
 
 METHOD CreateGender() CLASS Model
-    LOCAL oGender := GenderModel():New( ::getDBPathDBName() )
-    oGender:CreateTable()
-    oGender:InsertInitialGender() IF oGender:TableEmpty()
+    //LOCAL oGender := GenderModel():New( ::getDBPathDBName() )
+    //oGender:CreateTable()
+    //oGender:InsertInitialGender() IF oGender:TableEmpty()
 RETURN NIL

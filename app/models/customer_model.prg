@@ -117,8 +117,8 @@ METHOD InsertValidation() CLASS CustomerModel
     LOCAL oError := NIL, lValid := .F., lFound := .F.
 
     TRY
-        lFound := ::SimpleSearch( ::cSqlFindByCustomerName, { "#CUSTOMER_NAME" => ::CustomerName } )
-        ::Message := "Cliente ja cadastrado com este nome!" IF lFound
+        lFound := ::Search( ::cSqlCustomerFindByCustomerName, { "#CUSTOMER_NAME" => ::CustomerName } ):Found()
+        ::Message := "Cliente ja cadastrado com este nome!" IF ::Found()
         lValid := !lFound
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
@@ -129,10 +129,10 @@ METHOD UpdateValidation(cID) CLASS CustomerModel
     LOCAL oError := NIL, lValid := .F., lFound := .F.
 
     TRY
-        IF !::SimpleSearch( ::cSqlFindById, { "#ID" => cID } )
+        IF ::Search( ::cSqlCustomerFindById, { "#ID" => cID } ):NotFound()
             ::Message := "Cliente nao encontrado com Id: " + cID
         ELSE
-            lFound := ::SimpleSearch( ::cSqlAvoidDup, { "#ID" => cID, "#CUSTOMER_NAME" => ::CustomerName } )
+            lFound := ::Search( ::cSqlAvoidDup, { "#ID" => cID, "#CUSTOMER_NAME" => ::CustomerName } ):Found()
             ::Message := "Cliente ja cadastrado com este nome!" IF lFound
             lValid := !lFound
         ENDIF
@@ -145,7 +145,7 @@ METHOD DeleteValidation(cID) CLASS CustomerModel
     LOCAL oError := NIL, lValid := .F., lFound := .F.
 
     TRY
-        lFound := ::SimpleSearch( ::cSqlFindById, { "#ID" => cID } )
+        lFound := ::Search( ::cSqlCustomerFindById, { "#ID" => cID } ):Found()
         ::Message := "Cliente nao encontrado com Id: " + cID UNLESS lFound
         lValid := lFound
     CATCH oError
@@ -154,8 +154,6 @@ METHOD DeleteValidation(cID) CLASS CustomerModel
 RETURN lValid
 
 METHOD SetPropsToRecordHash(hRecord) CLASS CustomerModel
-    //"#GENDER_ID"                    =>  ::GenderId, ;
-
     hRecord := { ;
         "#ID"                           =>  ::Id, ;
         "#CUSTOMER_NAME"                =>  ::CustomerName, ;
@@ -175,14 +173,14 @@ RETURN hRecord
 
 METHOD InsertInitialCustomer() CLASS CustomerModel
     LOCAL oError := NIL
-    LOCAL oGender := GenderModel():New( ::getDBPathDBName() )
+    //LOCAL oGender := GenderModel():New( ::getDBPathDBName() )
     TRY
-        oGender:FindFirst()
-        oGender:FeedProperties()
+        //oGender:FindFirst()
+        //oGender:FeedProperties()
         WITH OBJECT Self
             :CustomerName := "JOAO DA SILVA."
             :BirthDate := "22/01/1980"
-            :Gender := oGender
+            :Gender := Utilities():New():getGUID()  //oGender
             :AddressDescription := "5th AV, 505"
             :CountryCodePhoneNumber := "55"
             :AreaPhoneNumber := "11"
@@ -193,8 +191,8 @@ METHOD InsertInitialCustomer() CLASS CustomerModel
             :CityName := "Sao Paulo"
             :CityStateInitials := "SP"
         ENDWITH
-        ::Insert()
-        ::ResetProperties()
+        ::Save()
+        //::ResetProperties()
     CATCH oError
         ::oCustomerDao:CustomerDao:Error := oError
     ENDTRY
@@ -253,22 +251,3 @@ METHOD ONERROR( xParam ) CLASS CustomerModel
     xResult := Error():New():getOnErrorMessage( Self, xParam, __GetMessage() )
     ? "*** Error => ", xResult
 RETURN xResult
-
-/*METHOD ONERROR( xParam ) CLASS CustomerModel
-    LOCAL cCol := __GetMessage(), xResult
-
-    IF Left( cCol, 1 ) == "_" // underscore means it's a variable
-       cCol = Right( cCol, Len( cCol ) - 1 )
-       IF ! __objHasData( Self, cCol )
-          __objAddData( Self, cCol )
-       ENDIF
-       IF xParam == NIL
-          xResult = __ObjSendMsg( Self, cCol )
-       ELSE
-          xResult = __ObjSendMsg( Self, "_" + cCol, xParam )
-       ENDIF
-    ELSE
-       xResult := "Method not created " + cCol
-    ENDIF
-    ? "*** Error => ", xResult
-RETURN xResult*/
