@@ -47,33 +47,33 @@ FUNCTION Main()
 			enddescribe
 			oCustomer := oCustomer:Destroy()
 
-			/*describe "Find_All_When_Empty"
+			describe "Find_All_When_Empty"
 				Find_All_When_Empty() WITH CONTEXT
-			enddescribe*/
+			enddescribe
 
-			/*describe "oCustomer:Save()"
+			describe "oCustomer:Save()"
 				oCustomer_Insert() WITH CONTEXT
-			enddescribe*/
+			enddescribe
 
-			/*describe "oCustomer:FindAll()"
+			describe "When counting all records"
+				oCustomer_CountAll() WITH CONTEXT
+			enddescribe
+
+			describe "Find Methods"
+				oCustomer_Find() WITH CONTEXT
+			enddescribe
+
+			describe "oCustomer:FindAll()"
 				aIDs := oCustomer_FindAll() WITH CONTEXT
-			enddescribe*/
+			enddescribe
 
-			/*describe "FindBy Methods"
-				oCustomer_FindBy() WITH CONTEXT
-			enddescribe*/
-
-			/*describe "oCustomer:Save( cId )"
+			describe "oCustomer:Save( cId )"
 				oCustomer_Update( aIDs ) WITH CONTEXT
 			enddescribe
 
 			describe "oCustomer:Delete( cId )"
 				oCustomer_Delete( aIDs ) WITH CONTEXT
 			enddescribe
-
-			describe "oCustomer:CountAll()"
-				oCustomer_CountAll() WITH CONTEXT
-			enddescribe*/
 
 		enddescribe
 
@@ -87,11 +87,12 @@ FUNCTION Find_All_When_Empty() FROM CONTEXT
 
 	describe "When no costumers in Table"
 		describe "Find all customers"
-			describe " oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindAll )"
+			describe "oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindAll )"
 			enddescribe
 			lFound := oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindAll ):Found()
 			context "oCustomer RecordSetLength property" expect(oCustomer:RecordSetLength()) TO_BE_ZERO
 			context "oCustomer Found method" expect(oCustomer:Found()) TO_BE_FALSY
+			context "oCustomer Found method" expect(lFound) TO_BE_FALSY
 		enddescribe
 	enddescribe
 	oCustomer := oCustomer:Destroy()
@@ -160,8 +161,20 @@ FUNCTION oCustomer_Insert() FROM CONTEXT
 
 RETURN NIL
 
+FUNCTION oCustomer_CountAll() FROM CONTEXT
+	LOCAL oCustomer := NIL
 
-FUNCTION oCustomer_FindBy() FROM CONTEXT
+	oCustomer := CustomerModel():New(DB_NAME)
+	describe "oCustomer:SearchCustomer( oCustomer:cSqlCustomerCountAll )"
+		oCustomer:SearchCustomer( oCustomer:cSqlCustomerCountAll )
+	enddescribe
+	describe "oCustomer:RecordSet[01]['NUMBER_OF_RECORDS']"
+		context "Number of Customers" expect(oCustomer:RecordSet[01]['NUMBER_OF_RECORDS']) TO_BE(1)
+	enddescribe
+	oCustomer := oCustomer:Destroy()
+RETURN NIL
+
+FUNCTION oCustomer_Find() FROM CONTEXT
 	LOCAL oCustomer := NIL
 
 	oCustomer := CustomerModel():New(DB_NAME)
@@ -196,7 +209,6 @@ FUNCTION oCustomer_FindBy() FROM CONTEXT
 
 	oCustomer := CustomerModel():New(DB_NAME)
 	describe "oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindById, { '#ID' => '999' } )"
-		//oCustomer:FindById( "999" )
 		describe "When Customer doesn't exist"
 			oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindById, { "#ID" => "999" } )
 			context "oCustomer:Found()" expect (oCustomer:Found()) TO_BE_FALSY
@@ -205,8 +217,8 @@ FUNCTION oCustomer_FindBy() FROM CONTEXT
 	oCustomer := oCustomer:Destroy()
 
 	oCustomer := CustomerModel():New(DB_NAME)
-	oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindByCustomerName, { '#CUSTOMER_NAME' => 'JOAO DESCONHECIDO' } )
-	describe "oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindByCustomerName, { '#CUSTOMER_NAME' => 'JOAO DESCONHECIDO' } )"
+	oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindByCustomerName, { '#CUSTOMER_NAME' => 'JOAO DA SILVA DESCONHECIDO' } )
+	describe "oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindByCustomerName, { '#CUSTOMER_NAME' => 'JOAO DA SILVA DESCONHECIDO' } )"
 		describe "When Customer Name doesn't exist"
 			context "and checking if it was found" expect (oCustomer:Found()) TO_BE_FALSY
 			context "Id" expect (oCustomer:Id) TO_BE( "" )
@@ -225,8 +237,8 @@ FUNCTION oCustomer_FindAll() FROM CONTEXT
 	endwith
 	oCustomer:Save()
 	describe "Find all customers"
-		oCustomer:FindAll()
-		context "oCustomer RecordSetLengthgth property" expect(oCustomer:RecordSetLengthgth) TO_BE(2)
+		oCustomer:SearchCustomer( oCustomer:cSqlCustomerFindAll )
+		context "oCustomer RecordSetLength property" expect(oCustomer:RecordSetLength) TO_BE(2)
 		context "oCustomer Found method" expect(oCustomer:Found) TO_BE_TRUTHY
 		context "oCustomer FoundMany method" expect(oCustomer:FoundMany) TO_BE_TRUTHY
 		describe "oCustomer:RecordSet"
@@ -290,7 +302,6 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 	enddescribe
 	oCustomer := oCustomer:Destroy()
 
-
 	describe "When trying to update name to an existent CustomerName"
 		describe "Insert 3# customer"
 			oCustomer := CustomerModel():New(DB_NAME)
@@ -309,7 +320,6 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 		oCustomer := oCustomer:Destroy()
 	enddescribe
 
-	//oCustomer := CustomerModel():New(DB_NAME)
 	describe "When updating any field, UPDATED_AT field must be updated"
 		describe "Insert 4# customer"
 			oCustomer := CustomerModel():New(DB_NAME)
@@ -317,13 +327,6 @@ FUNCTION oCustomer_Update(aIDs) FROM CONTEXT
 			oCustomer:CustomerName := "QUARTO CLIENTE"
 			cID4 := oCustomer:Save()
 			oCustomer := oCustomer:Destroy()
-			/*seed_costumer_fields(oCustomer)
-			with object oCustomer
-				:CustomerName := "QUARTO CLIENTE"
-			endwith
-			oCustomer:Save()
-			oCustomer:FindByCustomerName( "QUARTO CLIENTE" )
-			cID4 := oCustomer:Id*/
 		enddescribe
 		hb_idleSleep(1)
 		describe "oCustomer:Save( cID4 )"
@@ -368,32 +371,6 @@ FUNCTION oCustomer_Delete(aIDs) FROM CONTEXT
 			context "When getting Error" expect (oCustomer:Error) TO_BE_NIL
 			context "When getting Valid status" expect (oCustomer:Valid) TO_BE_TRUTHY
 			context "When getting Message" expect (oCustomer:Message) TO_BE("Cliente excluido com sucesso!")
-		enddescribe
-	enddescribe
-
-	oCustomer := oCustomer:Destroy()
-RETURN NIL
-
-FUNCTION oCustomer_CountAll() FROM CONTEXT
-	LOCAL oCustomer := NIL
-
-	oCustomer := CustomerModel():New(DB_NAME)
-	describe "When counting all records"
-		describe "oCustomer := CustomerModel():New(DB_NAME)"
-		enddescribe
-		describe "oCustomer:CountAll() --> nNumberOfRecords"
-			oCustomer:CountAll()
-			context "oCustomer RecordSetLengthgth property" expect(oCustomer:RecordSetLengthgth) TO_BE(1)
-			context "oCustomer Found method" expect(oCustomer:Found) TO_BE_TRUTHY
-			context "oCustomer FoundMany method" expect(oCustomer:FoundMany) TO_BE_FALSY
-		enddescribe
-
-		describe "oCustomer:CountAll()"
-			describe "oCustomer:FeedProperties()"
-				oCustomer:CountAll()
-				context "Table empty?" expect (oCustomer:TableEmpty()) TO_BE_FALSY
-				context "Number Of Records: oCustomer:CountAll()" expect (oCustomer:CountAll()) TO_BE( 3 )
-			enddescribe
 		enddescribe
 	enddescribe
 
