@@ -180,7 +180,7 @@ METHOD InsertInitialCustomer() CLASS CustomerModel
         WITH OBJECT Self
             :CustomerName := "JOAO DA SILVA."
             :BirthDate := "22/01/1980"
-            :Gender := Utilities():New():getGUID()  //oGender
+            :GenderId := Utilities():New():getGUID()  //oGender
             :AddressDescription := "5th AV, 505"
             :CountryCodePhoneNumber := "55"
             :AreaPhoneNumber := "11"
@@ -203,10 +203,9 @@ METHOD BrowseDataPrepare() CLASS CustomerModel
     LOCAL aColValues := {}, ahColValues := { => }
     LOCAL nCols := 0, i
 
-    nNumberOfRecords := ::CountAll()
+    ::SearchCustomer( ::cSqlCustomerFindAll )
 
-    ::FindAll()
-    ::FeedProperties()
+    nNumberOfRecords := ::RecordSetLength
 
     ahColValues := ::RecordSet
     nCols := Len(ahColValues)
